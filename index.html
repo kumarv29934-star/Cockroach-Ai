@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cockroach AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>🐞 Cockroach AI</h1>
+  <p>AI Video Generator</p>
+</header>
+
+<main>
+  <div class="card">
+    <label>Enter Prompt</label>
+    <textarea id="prompt" placeholder="Describe your video..."></textarea>
+  </div>
+
+  <div class="card">
+    <label>Image (Optional)</label>
+    <input type="file" id="image" accept="image/*">
+  </div>
+
+  <div class="card">
+    <label>Video Length</label>
+    <select id="duration">
+      <option>15 Seconds</option>
+    </select>
+  </div>
+
+  <button id="generateBtn">Generate Video</button>
+
+  <div id="status"></div>
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>
