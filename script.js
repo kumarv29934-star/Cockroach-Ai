@@ -2,6 +2,27 @@ const sendBtn = document.getElementById("sendBtn");
 const prompt = document.getElementById("prompt");
 const chatArea = document.getElementById("chatArea");
 
+// Sidebar buttons
+const buttons = document.querySelectorAll(".sidebar button");
+const newChatBtn = buttons[0];
+
+// Welcome message
+function welcomeMessage() {
+chatArea.innerHTML = `
+<div class="ai-message">
+👋 Welcome to Cockroach AI!<br><br>
+How can I help you today?
+</div>
+`;
+}
+
+// New Chat
+newChatBtn.addEventListener("click", () => {
+welcomeMessage();
+prompt.value = "";
+});
+
+// Send Message
 sendBtn.addEventListener("click", () => {
 
 const text = prompt.value.trim();
@@ -35,12 +56,33 @@ chatArea.scrollTop=chatArea.scrollHeight;
 
 setTimeout(()=>{
 
-aiMsg.innerHTML="Hello 👋<br><br>This is Cockroach AI Demo Mode.<br><br>Your AI backend will be connected soon.";
+aiMsg.innerHTML=`
+🤖 Demo Reply
+
+You asked:
+
+<b>${text}</b>
+
+Backend connection is coming soon.
+`;
 
 chatArea.scrollTop=chatArea.scrollHeight;
 
 },1000);
 
 prompt.value="";
+
+});
+
+// Press Enter to Send
+prompt.addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && !e.shiftKey){
+
+e.preventDefault();
+
+sendBtn.click();
+
+}
 
 });
