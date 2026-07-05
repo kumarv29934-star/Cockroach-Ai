@@ -1,42 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cockroach AI</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cockroach AI</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
 </head>
+
 <body>
 
-<header>
-  <h1>🐞 Cockroach AI</h1>
-  <p>AI Video Generator</p>
-</header>
+<nav class="navbar">
 
-<main>
-  <div class="card">
-    <label>Enter Prompt</label>
-    <textarea id="prompt" placeholder="Describe your video..."></textarea>
-  </div>
+<div class="logo">
+🪳 Cockroach AI
+</div>
 
-  <div class="card">
-    <label>Image (Optional)</label>
-    <input type="file" id="image" accept="image/*">
-  </div>
+<div class="nav-right">
 
-  <div class="card">
-    <label>Video Length</label>
-    <select id="duration">
-      <option>15 Seconds</option>
-    </select>
-  </div>
+<button class="upgrade-btn">
+Upgrade
+</button>
 
-  <button id="generateBtn">Generate Video</button>
+<div class="profile">
 
-  <div id="status"></div>
+<i class="fa-solid fa-user"></i>
+
+</div>
+
+</div>
+
+</nav>
+
+<main class="hero">
+
+<h1>
+The Future of AI Starts Here
+</h1>
+
+<p>
+
+Chat, Generate Images, Create Videos, Code, Research and much more...
+
+</p>
+
+<div class="prompt-box">
+
+<textarea
+placeholder="Ask anything..."
+id="prompt"></textarea>
+
+<button id="sendBtn">
+
+<i class="fa-solid fa-paper-plane"></i>
+
+</button>
+
+</div>
+
+<div class="feature-grid">
+  <div class="feature-card">
+
+<i class="fa-solid fa-comments"></i>
+
+<h3>AI Chat</h3>
+
+<p>Fast and smart conversations.</p>
+
+</div>
+
+<div class="feature-card">
+
+<i class="fa-solid fa-image"></i>
+
+<h3>Image Generator</h3>
+
+<p>Create stunning AI images.</p>
+
+</div>
+
+<div class="feature-card">
+
+<i class="fa-solid fa-video"></i>
+
+<h3>Video Generator</h3>
+
+<p>Generate cinematic AI videos.</p>
+
+</div>
+
+<div class="feature-card">
+
+<i class="fa-solid fa-music"></i>
+
+<h3>Music AI</h3>
+
+<p>Create songs instantly.</p>
+
+</div>
+
+<div class="feature-card">
+
+<i class="fa-solid fa-code"></i>
+
+<h3>Code Assistant</h3>
+
+<p>Write and debug code.</p>
+
+</div>
+
+<div class="feature-card">
+
+<i class="fa-solid fa-file-pdf"></i>
+
+<h3>PDF Chat</h3>
+
+<p>Ask questions from PDFs.</p>
+
+</div>
+
+</div>
+
 </main>
 
 <script src="script.js"></script>
 
 </body>
+
 </html>
