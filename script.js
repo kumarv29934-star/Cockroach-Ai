@@ -1,88 +1,85 @@
 const sendBtn = document.getElementById("sendBtn");
 const prompt = document.getElementById("prompt");
 const chatArea = document.getElementById("chatArea");
+const newChatBtn = document.getElementById("newChatBtn");
 
-// Sidebar buttons
-const buttons = document.querySelectorAll(".sidebar button");
-const newChatBtn = buttons[0];
+const BACKEND_URL = "https://cockroach-ai-backend.onrender.com";
 
-// Welcome message
 function welcomeMessage() {
-chatArea.innerHTML = `
-<div class="ai-message">
-👋 Welcome to Cockroach AI!<br><br>
-How can I help you today?
-</div>
-`;
+  chatArea.innerHTML = `
+  <div class="ai-message">
+  👋 Welcome to Cockroach AI!<br><br>
+  How can I help you today?
+  </div>
+  `;
 }
 
-// New Chat
 newChatBtn.addEventListener("click", () => {
-welcomeMessage();
-prompt.value = "";
+  welcomeMessage();
+  prompt.value = "";
 });
 
-// Send Message
-sendBtn.addEventListener("click", () => {
+sendBtn.addEventListener("click", async () => {
 
-const text = prompt.value.trim();
+  const text = prompt.value.trim();
 
-if(text===""){
-alert("Please enter a prompt.");
-return;
-}
+  if (!text) {
+    alert("Please enter a prompt.");
+    return;
+  }
 
-// User Message
+  const userMsg = document.createElement("div");
+  userMsg.className = "user-message";
+  userMsg.innerHTML = text;
+  chatArea.appendChild(userMsg);
 
-const userMsg=document.createElement("div");
+  const aiMsg = document.createElement("div");
+  aiMsg.className = "ai-message";
+  aiMsg.innerHTML = "🤖 Thinking...";
+  chatArea.appendChild(aiMsg);
 
-userMsg.className="user-message";
+  chatArea.scrollTop = chatArea.scrollHeight;
 
-userMsg.innerHTML=text;
+  prompt.value = "";
 
-chatArea.appendChild(userMsg);
+  try {
 
-// AI Message
+    const response = await fetch(`${BACKEND_URL}/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text
+      })
+    });
 
-const aiMsg=document.createElement("div");
+    const data = await response.json();
 
-aiMsg.className="ai-message";
+    if (data.success) {
+      aiMsg.innerHTML = "🤖 " + data.reply;
+    } else {
+      aiMsg.innerHTML = "❌ " + data.reply;
+    }
 
-aiMsg.innerHTML="🤖 Thinking...";
+  } catch (error) {
 
-chatArea.appendChild(aiMsg);
+    aiMsg.innerHTML = "❌ Unable to connect to Cockroach AI.";
 
-chatArea.scrollTop=chatArea.scrollHeight;
+  }
 
-setTimeout(()=>{
-
-aiMsg.innerHTML=`
-🤖 Demo Reply
-
-You asked:
-
-<b>${text}</b>
-
-Backend connection is coming soon.
-`;
-
-chatArea.scrollTop=chatArea.scrollHeight;
-
-},1000);
-
-prompt.value="";
+  chatArea.scrollTop = chatArea.scrollHeight;
 
 });
 
-// Press Enter to Send
-prompt.addEventListener("keydown",function(e){
+prompt.addEventListener("keydown", function (e) {
 
-if(e.key==="Enter" && !e.shiftKey){
+  if (e.key === "Enter" && !e.shiftKey) {
 
-e.preventDefault();
+    e.preventDefault();
 
-sendBtn.click();
+    sendBtn.click();
 
-}
+  }
 
 });
