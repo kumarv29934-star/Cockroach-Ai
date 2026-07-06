@@ -166,3 +166,101 @@ color:black;
 .main-content{
 margin-left:260px;
 }
+/* ================= IMAGE GENERATOR ================= */
+
+.chat-area{
+max-width:900px;
+margin:20px auto;
+padding:20px;
+background:#161b22;
+border-radius:15px;
+text-align:left;
+min-height:120px;
+}
+
+.ai-message,
+.user-message{
+padding:15px;
+margin:10px 0;
+border-radius:12px;
+line-height:1.6;
+}
+
+.ai-message{
+background:#1f2937;
+}
+
+.user-message{
+background:#00ffd5;
+color:#000;
+text-align:right;
+font-weight:600;
+}
+
+#imageSection{
+max-width:900px;
+margin:30px auto;
+padding:25px;
+background:#161b22;
+border-radius:15px;
+display:none;
+}
+
+#imagePrompt{
+width:100%;
+padding:16px;
+font-size:18px;
+border:none;
+outline:none;
+border-radius:12px;
+background:#0d1117;
+color:white;
+margin-top:20px;
+}
+
+#generateImageBtn{
+margin-top:20px;
+padding:15px 35px;
+font-size:18px;
+background:#00ffd5;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:700;
+transition:.3s;
+}
+
+#generateImageBtn:hover{
+transform:scale(1.05);
+}
+
+#imageResult img{
+max-width:100%;
+border-radius:15px;
+margin-top:25px;
+border:2px solid #00ffd5;
+}
+
+#imageResult a{
+display:inline-block;
+margin-top:20px;
+padding:12px 25px;
+background:#00ffd5;
+color:black;
+text-decoration:none;
+font-weight:bold;
+border-radius:10px;
+}
+
+.loading{
+margin-top:20px;
+font-size:18px;
+color:#00ffd5;
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+50%{
+opacity:.3;
+}
+}
