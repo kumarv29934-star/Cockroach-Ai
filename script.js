@@ -87,8 +87,7 @@ imageBtn.addEventListener("click", () => {
   imageSection.style.display = "block";
 
 });
-
-/* ================= IMAGE GENERATION (DEMO NOW) ================= */
+/* ================= REAL IMAGE GENERATION ================= */
 
 generateImageBtn.addEventListener("click", async () => {
 
@@ -98,6 +97,104 @@ generateImageBtn.addEventListener("click", async () => {
     alert("Please enter image prompt");
     return;
   }
+
+  imageResult.innerHTML = `
+  <div class="loading">
+  ⏳ Generating 2 AI Images...
+  </div>
+  `;
+
+  try {
+
+    const response = await fetch(`${BACKEND_URL}/generate-image`, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        prompt: promptText
+      })
+
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+
+      imageResult.innerHTML = `
+      <div class="loading">
+      ❌ ${data.message}
+      </div>
+      `;
+
+      return;
+
+    }
+
+    imageResult.innerHTML = "";
+
+    data.images.forEach((img, index) => {
+
+      imageResult.innerHTML += `
+
+      <div style="margin-top:25px">
+
+      <img
+      src="${img}"
+      style="
+      width:100%;
+      max-width:512px;
+      border-radius:15px;
+      border:2px solid #00ffd5;
+      ">
+
+      <br><br>
+
+      <a
+      href="${img}"
+      download="Cockroach-AI-${index+1}.png"
+      style="
+      background:#00ffd5;
+      color:black;
+      padding:10px 20px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:bold;
+      ">
+
+      ⬇️ Download Image ${index+1}
+
+      </a>
+
+      </div>
+
+      `;
+
+    });
+
+    let credit = document.getElementById("creditCount");
+
+    credit.innerText = Number(credit.innerText) - 10;
+
+  }
+
+  catch(err){
+
+    console.log(err);
+
+    imageResult.innerHTML=`
+    <div class="loading">
+    ❌ Image Generation Failed
+    </div>
+    `;
+
+  }
+
+});
+
 
   imageResult.innerHTML = `<div class="loading">⏳ Generating image...</div>`;
 
