@@ -78,25 +78,7 @@ app.post("/generate-image", async (req, res) => {
 
     const buffer = Buffer.from(await image.arrayBuffer());
 
-    res.json({
-      success: true,
-      images: [
-        `data:image/png;base64,${buffer.toString("base64")}`
-      ]
-    });
-
-  } catch (error) {
-
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-
-  }
-
-});
+    
     }
 
     const response = await ai.models.generateImages({
