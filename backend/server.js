@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { GoogleGenAI } = require("@google/genai");
-
+const { InferenceClient } = require("@huggingface/inference");
 const app = express();
 
 app.use(cors());
@@ -12,7 +12,7 @@ app.use(express.json());
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
-
+const hf = new InferenceClient(process.env.HF_TOKEN);
 // ================= HOME =================
 
 app.get("/", (req, res) => {
