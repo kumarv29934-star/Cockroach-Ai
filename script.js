@@ -191,33 +191,9 @@ generateImageBtn.addEventListener("click", async () => {
     </div>
     `;
 
-  }
+ }
 
 });
-
-
-  imageResult.innerHTML = `<div class="loading">⏳ Generating image...</div>`;
-
-  /*
-    NEXT STEP:
-    Yahan hum Google Imagen API connect karenge
-    Abhi demo output hai
-  */
-
-  setTimeout(() => {
-
-    imageResult.innerHTML = `
-      <div class="loading">🖼️ AI Image Generated (Demo)</div>
-      <img src="https://via.placeholder.com/512x512.png?text=Cockroach+AI+Image" />
-      <br>
-      <a href="#" download>⬇️ Download</a>
-    `;
-
-  }, 2000);
-
-});
-
-/* ================= ENTER KEY ================= */
 
 prompt.addEventListener("keydown", function (e) {
 
