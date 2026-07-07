@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const { GoogleGenAI } = require("@google/genai");
 const { InferenceClient } = require("@huggingface/inference");
+
 const app = express();
 
 app.use(cors());
@@ -12,14 +13,16 @@ app.use(express.json());
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
+
 const hf = new InferenceClient(process.env.HF_TOKEN);
+
 // ================= HOME =================
 
 app.get("/", (req, res) => {
   res.json({
     success: true,
     name: "Cockroach AI Backend",
-    version: "2.1.0",
+    version: "3.0.0",
     status: "Running",
   });
 });
@@ -58,8 +61,8 @@ app.post("/chat", async (req, res) => {
 });
 
 // ================= IMAGE =================
-app.post("/generate-image", async (req, res) => {
 
+app.post("/generate-image", async (req, res) => {
   try {
 
     const { prompt } = req.body;
@@ -67,44 +70,33 @@ app.post("/generate-image", async (req, res) => {
     if (!prompt) {
       return res.status(400).json({
         success: false,
-        message: "Prompt is required."
+        message: "Prompt is required.",
       });
     }
 
-    const image = await hf.textToImage({
+    const imageBlob = await hf.textToImage({
       model: "black-forest-labs/FLUX.1-dev",
-      inputs: prompt
+      inputs: prompt,
     });
 
-    const buffer = Buffer.from(await image.arrayBuffer());
-
-    
-    }
-
-    const response = await ai.models.generateImages({
-      model: "imagen-4.0-generate-001",
-      prompt: prompt,
-      config: {
-        numberOfImages: 2,
-      },
-    });
-
-    const images = response.generatedImages.map((img) => {
-      return `data:image/png;base64,${img.image.imageBytes}`;
-    });
+    const buffer = Buffer.from(await imageBlob.arrayBuffer());
 
     res.json({
       success: true,
-      images,
+      images: [
+        `data:image/png;base64,${buffer.toString("base64")}`,
+      ],
     });
 
   } catch (error) {
+
     console.error(error);
 
     res.status(500).json({
       success: false,
       message: error.message,
     });
+
   }
 });
 
