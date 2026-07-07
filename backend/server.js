@@ -53,16 +53,10 @@ app.post("/chat", async (req, res) => {
 
     console.error(error);
 
-    res.status(500).json({
-      success: false,
-      reply: "AI Server Error"
-    });
-
-  }
-
+res.status(500).json({
+  success: false,
+  message: error.message
 });
-
-// ================= IMAGE GENERATOR =================
 
 app.post("/generate-image", async (req, res) => {
 
