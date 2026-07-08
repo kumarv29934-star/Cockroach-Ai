@@ -2,8 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const axios = require("axios");
 const { GoogleGenAI } = require("@google/genai");
-const { InferenceClient } = require("@huggingface/inference");
 
 const app = express();
 
@@ -14,15 +14,13 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-const hf = new InferenceClient(process.env.HF_TOKEN);
-
 // ================= HOME =================
 
 app.get("/", (req, res) => {
   res.json({
     success: true,
     name: "Cockroach AI Backend",
-    version: "3.0.0",
+    version: "4.0.0",
     status: "Running",
   });
 });
@@ -31,6 +29,7 @@ app.get("/", (req, res) => {
 
 app.post("/chat", async (req, res) => {
   try {
+
     const { message } = req.body;
 
     if (!message) {
@@ -51,18 +50,21 @@ app.post("/chat", async (req, res) => {
     });
 
   } catch (error) {
+
     console.error(error);
 
     res.status(500).json({
       success: false,
       reply: error.message,
     });
+
   }
 });
 
 // ================= IMAGE =================
 
 app.post("/generate-image", async (req, res) => {
+
   try {
 
     const { prompt } = req.body;
@@ -70,22 +72,25 @@ app.post("/generate-image", async (req, res) => {
     if (!prompt) {
       return res.status(400).json({
         success: false,
-        message: "Prompt is required.",
+        message: "Prompt is required."
       });
     }
 
-    const imageBlob = await hf.textToImage({
-      model: "black-forest-labs/FLUX.1-dev",
-      inputs: prompt,
+    const imageUrl =
+      "https://image.pollinations.ai/prompt/" +
+      encodeURIComponent(prompt + "?width=720&height=1280&model=flux");
+
+    const response = await axios.get(imageUrl, {
+      responseType: "arraybuffer"
     });
 
-    const buffer = Buffer.from(await imageBlob.arrayBuffer());
+    const base64 = Buffer.from(response.data).toString("base64");
 
     res.json({
       success: true,
       images: [
-        `data:image/png;base64,${buffer.toString("base64")}`,
-      ],
+        `data:image/png;base64,${base64}`
+      ]
     });
 
   } catch (error) {
@@ -94,10 +99,11 @@ app.post("/generate-image", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Image generation failed."
     });
 
   }
+
 });
 
 // ================= SERVER =================
