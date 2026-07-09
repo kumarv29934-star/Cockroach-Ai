@@ -24,7 +24,14 @@ app.get("/", (req, res) => {
     status: "Running",
   });
 });
+// ================= TEST =================
 
+app.get("/test", (req, res) => {
+  res.json({
+    api: process.env.DASHSCOPE_API_KEY ? "OK" : "Missing",
+    workspace: process.env.QWEN_WORKSPACE_ID
+  });
+});
 // ================= CHAT =================
 
 app.post("/chat", async (req, res) => {
