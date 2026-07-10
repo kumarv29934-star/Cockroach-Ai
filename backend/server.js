@@ -71,9 +71,7 @@ app.post("/chat", async (req, res) => {
 // ================= IMAGE =================
 
 app.post("/generate-image", async (req, res) => {
-
   try {
-
     const { prompt } = req.body;
 
     if (!prompt) {
@@ -83,36 +81,55 @@ app.post("/generate-image", async (req, res) => {
       });
     }
 
-    const imageUrl =
-      "https://image.pollinations.ai/prompt/" +
-      encodeURIComponent(prompt + "?width=720&height=1280&model=flux");
+    const response = await axios.post(
+  `https://${process.env.QWEN_WORKSPACE_ID}.cn-beijing.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
+      {
+        model: "qwen-image-2.0-pro",
+        input: {
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  text: prompt
+                }
+              ]
+            }
+          ]
+        },
+        parameters: {
+          size: "1024*1024",
+          watermark: false,
+          prompt_extend: true
+        }
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`
+        }
+      }
+    );
 
-    const response = await axios.get(imageUrl, {
-      responseType: "arraybuffer"
-    });
-
-    const base64 = Buffer.from(response.data).toString("base64");
+    const image =
+      response.data.output.choices[0].message.content[0].image;
 
     res.json({
       success: true,
-      images: [
-        `data:image/png;base64,${base64}`
-      ]
+      images: [image]
     });
 
-  } catch (error) {
-
-    console.error(error);
+  } catch (err) {
+    console.error(
+      err.response?.data || err.message
+    );
 
     res.status(500).json({
       success: false,
-      message: "Image generation failed."
+      message: err.response?.data || err.message
     });
-
   }
-
 });
-
 // ================= SERVER =================
 
 const PORT = process.env.PORT || 3000;
