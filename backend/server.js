@@ -56,15 +56,14 @@ app.post("/chat", async (req, res) => {
       reply: response.text,
     });
 
-  } catch (error) {
+  } catch (err) {
+  console.log("FULL ERROR:");
+  console.log(JSON.stringify(err.response?.data || err.message, null, 2));
 
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      reply: error.message,
-    });
-
+  res.status(500).json({
+    success: false,
+    message: err.response?.data || err.message
+  });
   }
 });
 
@@ -80,36 +79,37 @@ app.post("/generate-image", async (req, res) => {
         message: "Prompt is required."
       });
     }
-
-     const response = await axios.post(
+ 
+    
+        const response = await axios.post(
   `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
   {
-        model: "qwen-image-2.0-pro",
-        input: {
-          messages: [
+    model: "qwen-image-2.0-pro",
+    input: {
+      messages: [
+        {
+          role: "user",
+          content: [
             {
-              role: "user",
-              content: [
-                {
-                  text: prompt
-                }
-              ]
+              text: prompt
             }
           ]
-        },
-        parameters: {
-          size: "1024*1024",
-          watermark: false,
-          prompt_extend: true
         }
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`
-        }
-      }
-    );
+      ]
+    },
+    parameters: {
+      size: "1024*1024",
+      watermark: false,
+      prompt_extend: true
+    }
+  },
+  {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`
+    }
+  }
+);
 
     const image =
       response.data.output.choices[0].message.content[0].image;
