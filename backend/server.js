@@ -81,9 +81,9 @@ app.post("/generate-image", async (req, res) => {
       });
     }
 
-    const response = await axios.post(
-  `https://${process.env.QWEN_WORKSPACE_ID}.cn-beijing.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
-      {
+     const response = await axios.post(
+  `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
+  {
         model: "qwen-image-2.0-pro",
         input: {
           messages: [
