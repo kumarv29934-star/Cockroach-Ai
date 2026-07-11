@@ -2,192 +2,283 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Cockroach AI</title>
 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
 <link rel="stylesheet" href="style.css">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
 <body>
 
+<div class="app">
+
+<!-- ================= SIDEBAR ================= -->
+
 <div class="sidebar">
 
-<h2>🪳 Cockroach AI</h2>
-
-<button id="newChatBtn">➕ New Chat</button>
-
-<button id="historyBtn">💬 Chat History</button>
-
-<button id="imageBtn">🖼️ Image Generator</button>
-
-<button id="videoBtn">🎥 Video Generator</button>
-
-<button id="musicBtn">🎵 Music AI</button>
-
-<button id="pdfBtn">📄 PDF Chat</button>
-
-<button id="codeBtn">💻 Code Assistant</button>
-
-<button id="settingsBtn">⚙️ Settings</button>
-
-<button id="creditsBtn">
-💳 Credits :
-<span id="creditCount">1000</span>
-</button>
-
-<button id="profileBtn">👤 My Profile</button>
-
-</div>
-
-<div class="main-content">
-
-<nav class="navbar">
-
 <div class="logo">
-🪳 Cockroach AI
+🐞 Cockroach AI
 </div>
 
-<div class="nav-right">
-
-<button class="upgrade-btn">
-Upgrade
+<button class="menu active" id="chatBtn">
+<i class="fa-solid fa-comments"></i>
+<span>AI Chat</span>
 </button>
 
-<div class="profile">
-<i class="fa-solid fa-user"></i>
+<button class="menu" id="imageBtn">
+<i class="fa-solid fa-image"></i>
+<span>Image Generator</span>
+</button>
+
+<button class="menu" id="videoBtn">
+<i class="fa-solid fa-video"></i>
+<span>Video Generator</span>
+</button>
+
+<button class="menu" id="musicBtn">
+<i class="fa-solid fa-music"></i>
+<span>Music AI</span>
+</button>
+
+<button class="menu" id="pdfBtn">
+<i class="fa-solid fa-file-pdf"></i>
+<span>PDF Chat</span>
+</button>
+
+<button class="menu" id="codeBtn">
+<i class="fa-solid fa-code"></i>
+<span>Code Assistant</span>
+</button>
+
+<button class="menu" id="settingBtn">
+<i class="fa-solid fa-gear"></i>
+<span>Settings</span>
+</button>
+
+<div class="bottom">
+
+<div class="creditBox">
+
+Credits
+
+<div id="creditCount">
+100
 </div>
 
 </div>
 
-</nav>
+</div>
 
-<main class="hero">
+</div>
 
-<h1>The Future of AI Starts Here</h1>
+<!-- ================= MAIN ================= -->
+
+<div class="main">
+
+<header>
+
+<h1>Cockroach AI</h1>
 
 <p>
-Chat, Generate Images, Create Videos, Code, Research and much more...
+Powered by Gemini • Qwen • Luma AI
 </p>
 
-<div id="chatArea" class="chat-area">
+</header>
+
+<!-- ================= CHAT ================= -->
+
+<section id="chatSection">
+
+<div id="chatArea">
 
 <div class="ai-message">
-👋 Welcome to Cockroach AI! How can I help you today?
-</div>
+
+👋 Welcome to Cockroach AI
 
 </div>
 
-<!-- IMAGE GENERATOR -->
+</div>
 
-<div id="imageSection" style="display:none;">
+<div class="chatInput">
 
-<h2 style="margin-top:30px;">🖼️ AI Image Generator</h2>
+<textarea
+id="prompt"
+placeholder="Ask anything..."></textarea>
 
-<input
-type="text"
+<button id="sendBtn">
+
+Send
+
+</button>
+
+</div>
+
+</section>
+
+<!-- ================= IMAGE ================= -->
+
+<section id="imageSection" style="display:none;">
+
+<h2>🖼 Image Generator</h2>
+
+<textarea
 id="imagePrompt"
-placeholder="Describe the image you want..."
-style="
-width:100%;
-padding:15px;
-margin-top:20px;
-border-radius:10px;
-border:none;
-font-size:18px;
-">
+placeholder="Describe your image..."></textarea>
 
-<br>
-
-<button
-id="generateImageBtn"
-style="
-margin-top:20px;
-padding:15px 35px;
-font-size:18px;
-background:#00ffd5;
-border:none;
-border-radius:10px;
-cursor:pointer;
-">
+<button id="generateImageBtn">
 
 Generate Image
 
 </button>
 
-<div
-id="imageResult"
-style="
-margin-top:30px;
-text-align:center;
-">
+<div id="imageResult"></div>
 
-</div>
+</section>
 
-</div>
+<!-- ================= VIDEO ================= -->
 
-<div class="prompt-box">
+<section id="videoSection" style="display:none;">
+
+<h2>🎥 Video Generator</h2>
 
 <textarea
-placeholder="Ask anything..."
-id="prompt"></textarea>
+id="videoPrompt"
+placeholder="Describe your video..."></textarea>
 
-<button id="sendBtn">
-<i class="fa-solid fa-paper-plane"></i>
+<input
+type="file"
+id="videoImage"
+accept="image/*">
+
+<button id="generateVideoBtn">
+
+Generate Video
+
 </button>
 
+<div id="videoStatus"></div>
+
+<div id="videoResult"></div>
+
+</section>
+<!-- ================= MUSIC ================= -->
+
+<section id="musicSection" style="display:none;">
+
+<h2>🎵 Music AI</h2>
+
+<p>Coming Soon...</p>
+
+<button disabled>
+Generate Music
+</button>
+
+</section>
+
+<!-- ================= PDF ================= -->
+
+<section id="pdfSection" style="display:none;">
+
+<h2>📄 PDF Chat</h2>
+
+<input
+type="file"
+accept=".pdf">
+
+<br><br>
+
+<textarea
+id="pdfPrompt"
+placeholder="Ask questions from PDF..."></textarea>
+
+<button disabled>
+
+Chat with PDF
+
+</button>
+
+<div id="pdfResult"></div>
+
+</section>
+
+<!-- ================= CODE ================= -->
+
+<section id="codeSection" style="display:none;">
+
+<h2>💻 Code Assistant</h2>
+
+<textarea
+id="codePrompt"
+placeholder="Paste your code here..."></textarea>
+
+<button disabled>
+
+Analyze Code
+
+</button>
+
+<div id="codeResult"></div>
+
+</section>
+
+<!-- ================= SETTINGS ================= -->
+
+<section id="settingsSection" style="display:none;">
+
+<h2>⚙ Settings</h2>
+
+<div class="setting-card">
+
+<p>Theme</p>
+
+<select id="theme">
+
+<option>Dark</option>
+
+<option>Light</option>
+
+</select>
+
 </div>
 
-<div class="feature-grid">
+<div class="setting-card">
 
-<div class="feature-card">
-<i class="fa-solid fa-comments"></i>
-<h3>AI Chat</h3>
-<p>Fast and smart conversations.</p>
-</div>
+<p>Backend Status</p>
 
-<div class="feature-card">
-<i class="fa-solid fa-image"></i>
-<h3>Image Generator</h3>
-<p>Create stunning AI images.</p>
-</div>
-
-<div class="feature-card">
-<i class="fa-solid fa-video"></i>
-<h3>Video Generator</h3>
-<p>Generate cinematic AI videos.</p>
-</div>
-
-<div class="feature-card">
-<i class="fa-solid fa-music"></i>
-<h3>Music AI</h3>
-<p>Create songs instantly.</p>
-</div>
-
-<div class="feature-card">
-<i class="fa-solid fa-code"></i>
-<h3>Code Assistant</h3>
-<p>Write and debug code.</p>
-</div>
-
-<div class="feature-card">
-<i class="fa-solid fa-file-pdf"></i>
-<h3>PDF Chat</h3>
-<p>Ask questions from PDFs.</p>
-</div>
+<span style="color:lime;">
+🟢 Connected
+</span>
 
 </div>
 
-</main>
+<div class="setting-card">
+
+<p>Version</p>
+
+<span>Cockroach AI v4.0</span>
+
+</div>
+
+</section>
+
+<footer>
+
+<p>
+
+© 2026 Cockroach AI • Powered by Gemini • Qwen • Luma AI
+
+</p>
+
+</footer>
+
+</div>
 
 </div>
 
