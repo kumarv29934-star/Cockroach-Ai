@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
     status: "Running",
   });
 });
+
 // ================= TEST =================
 
 app.get("/test", (req, res) => {
@@ -32,11 +33,11 @@ app.get("/test", (req, res) => {
     workspace: process.env.QWEN_WORKSPACE_ID
   });
 });
+
 // ================= CHAT =================
 
 app.post("/chat", async (req, res) => {
   try {
-
     const { message } = req.body;
 
     if (!message) {
@@ -57,13 +58,13 @@ app.post("/chat", async (req, res) => {
     });
 
   } catch (err) {
-  console.log("FULL ERROR:");
-  console.log(JSON.stringify(err.response?.data || err.message, null, 2));
+    console.log("FULL ERROR:");
+    console.log(JSON.stringify(err.response?.data || err.message, null, 2));
 
-  res.status(500).json({
-    success: false,
-    message: err.response?.data || err.message
-  });
+    res.status(500).json({
+      success: false,
+      message: err.response?.data || err.message
+    });
   }
 });
 
@@ -79,37 +80,36 @@ app.post("/generate-image", async (req, res) => {
         message: "Prompt is required."
       });
     }
- 
-    
-        const response = await axios.post(
-  `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
-  {
-    model: "qwen-image-2.0-pro",
-    input: {
-      messages: [
-        {
-          role: "user",
-          content: [
+
+    const response = await axios.post(
+      `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
+      {
+        model: "qwen-image-2.0-pro",
+        input: {
+          messages: [
             {
-              text: prompt
+              role: "user",
+              content: [
+                {
+                  text: prompt
+                }
+              ]
             }
           ]
+        },
+        parameters: {
+          size: "1024*1024",
+          watermark: false,
+          prompt_extend: true
         }
-      ]
-    },
-    parameters: {
-      size: "1024*1024",
-      watermark: false,
-      prompt_extend: true
-    }
-  },
-  {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`
-    }
-  }
-);
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`
+        }
+      }
+    );
 
     const image =
       response.data.output.choices[0].message.content[0].image;
@@ -120,9 +120,8 @@ app.post("/generate-image", async (req, res) => {
     });
 
   } catch (err) {
-    console.error(
-      err.response?.data || err.message
-    );
+    console.log("FULL ERROR:");
+    console.log(JSON.stringify(err.response?.data || err.message, null, 2));
 
     res.status(500).json({
       success: false,
@@ -130,6 +129,10 @@ app.post("/generate-image", async (req, res) => {
     });
   }
 });
+
+// ================= VIDEO =================
+// Luma AI Video API yahan add karenge
+
 // ================= SERVER =================
 
 const PORT = process.env.PORT || 3000;
