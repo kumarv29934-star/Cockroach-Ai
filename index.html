@@ -1,98 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Cockroach AI</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
-<link rel="stylesheet" href="style.css">
-
-</head>
-
-<body>
-
-<div class="app">
-
-<!-- ================= SIDEBAR ================= -->
-
-<div class="sidebar">
-
-<div class="logo">
-🐞 Cockroach AI
-</div>
-
-<button class="menu active" id="chatBtn">
-<i class="fa-solid fa-comments"></i>
-<span>AI Chat</span>
-</button>
-
-<button class="menu" id="imageBtn">
-<i class="fa-solid fa-image"></i>
-<span>Image Generator</span>
-</button>
-
-<button class="menu" id="videoBtn">
-<i class="fa-solid fa-video"></i>
-<span>Video Generator</span>
-</button>
-
-<button class="menu" id="musicBtn">
-<i class="fa-solid fa-music"></i>
-<span>Music AI</span>
-</button>
-
-<button class="menu" id="pdfBtn">
-<i class="fa-solid fa-file-pdf"></i>
-<span>PDF Chat</span>
-</button>
-
-<button class="menu" id="codeBtn">
-<i class="fa-solid fa-code"></i>
-<span>Code Assistant</span>
-</button>
-
-<button class="menu" id="settingBtn">
-<i class="fa-solid fa-gear"></i>
-<span>Settings</span>
-</button>
-
-<div class="bottom">
-
-<div class="creditBox">
-
-Credits
-
-<div id="creditCount">
-100
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ================= MAIN ================= -->
-
-<div class="main">
-
 <header>
 
-<h1>Cockroach AI</h1>
+<h1>🐞 Cockroach AI v5</h1>
 
 <p>
-Powered by Gemini • Qwen • Luma AI
+Powered by Cockroach AI
 </p>
 
 </header>
-
-<!-- ================= CHAT ================= -->
+<!-- ================= CHAT SECTION ================= -->
 
 <section id="chatSection">
 
@@ -101,6 +16,10 @@ Powered by Gemini • Qwen • Luma AI
 <div class="ai-message">
 
 👋 Welcome to Cockroach AI
+
+<br><br>
+
+How can I help you today?
 
 </div>
 
@@ -122,9 +41,11 @@ Send
 
 </section>
 
-<!-- ================= IMAGE ================= -->
+<!-- ================= IMAGE SECTION ================= -->
 
-<section id="imageSection" style="display:none;">
+<section
+id="imageSection"
+style="display:none;">
 
 <h2>🖼 Image Generator</h2>
 
@@ -142,11 +63,13 @@ Generate Image
 
 </section>
 
-<!-- ================= VIDEO ================= -->
+<!-- ================= VIDEO SECTION ================= -->
 
-<section id="videoSection" style="display:none;">
+<section
+id="videoSection"
+style="display:none;">
 
-<h2>🎥 Video Generator</h2>
+<h2>🎬 Video Generator</h2>
 
 <textarea
 id="videoPrompt"
@@ -157,7 +80,8 @@ type="file"
 id="videoImage"
 accept="image/*">
 
-<button id="generateVideoBtn">
+<button
+id="generateVideoBtn">
 
 Generate Video
 
@@ -168,21 +92,27 @@ Generate Video
 <div id="videoResult"></div>
 
 </section>
-<!-- ================= MUSIC ================= -->
+<!-- ================= MUSIC SECTION ================= -->
 
 <section id="musicSection" style="display:none;">
 
 <h2>🎵 Music AI</h2>
 
-<p>Coming Soon...</p>
+<textarea
+id="musicPrompt"
+placeholder="Describe your music..."></textarea>
 
-<button disabled>
+<button id="generateMusicBtn">
+
 Generate Music
+
 </button>
+
+<div id="musicResult"></div>
 
 </section>
 
-<!-- ================= PDF ================= -->
+<!-- ================= PDF SECTION ================= -->
 
 <section id="pdfSection" style="display:none;">
 
@@ -190,15 +120,16 @@ Generate Music
 
 <input
 type="file"
+id="pdfFile"
 accept=".pdf">
 
 <br><br>
 
 <textarea
 id="pdfPrompt"
-placeholder="Ask questions from PDF..."></textarea>
+placeholder="Ask questions from your PDF..."></textarea>
 
-<button disabled>
+<button id="chatPdfBtn">
 
 Chat with PDF
 
@@ -208,7 +139,7 @@ Chat with PDF
 
 </section>
 
-<!-- ================= CODE ================= -->
+<!-- ================= CODE SECTION ================= -->
 
 <section id="codeSection" style="display:none;">
 
@@ -218,7 +149,7 @@ Chat with PDF
 id="codePrompt"
 placeholder="Paste your code here..."></textarea>
 
-<button disabled>
+<button id="analyzeCodeBtn">
 
 Analyze Code
 
@@ -228,7 +159,7 @@ Analyze Code
 
 </section>
 
-<!-- ================= SETTINGS ================= -->
+<!-- ================= SETTINGS SECTION ================= -->
 
 <section id="settingsSection" style="display:none;">
 
@@ -236,47 +167,29 @@ Analyze Code
 
 <div class="setting-card">
 
-<p>Theme</p>
+<h3>Credits</h3>
 
-<select id="theme">
-
-<option>Dark</option>
-
-<option>Light</option>
-
-</select>
+<p id="creditText">1000</p>
 
 </div>
 
 <div class="setting-card">
 
-<p>Backend Status</p>
+<h3>Backend</h3>
 
-<span style="color:lime;">
-🟢 Connected
-</span>
+<p id="backendStatus">Checking...</p>
 
 </div>
 
 <div class="setting-card">
 
-<p>Version</p>
+<h3>Version</h3>
 
-<span>Cockroach AI v4.0</span>
+<p>Cockroach AI v5</p>
 
 </div>
 
 </section>
-
-<footer>
-
-<p>
-
-© 2026 Cockroach AI • Powered by Gemini • Qwen • Luma AI
-
-</p>
-
-</footer>
 
 </div>
 
