@@ -203,3 +203,48 @@ prompt.addEventListener("keydown", function (e) {
   }
 
 });
+document.getElementById("generateBtn").addEventListener("click", async () => {
+
+  const prompt = document.getElementById("prompt").value.trim();
+
+  if (!prompt) {
+    alert("Please enter a prompt");
+    return;
+  }
+
+  document.getElementById("status").innerHTML = "⏳ Generating Video...";
+
+  try {
+
+    const response = await fetch(`${BACKEND_URL}/generate-video`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: prompt
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+
+      document.getElementById("status").innerHTML =
+      "✅ Video request sent.<br>ID: " + data.id;
+
+    } else {
+
+      document.getElementById("status").innerHTML =
+      "❌ " + JSON.stringify(data.message);
+
+    }
+
+  } catch (err) {
+
+    document.getElementById("status").innerHTML =
+    "❌ Failed to connect backend";
+
+  }
+
+});
