@@ -135,16 +135,6 @@ codeSection.style.display="block";
 
 };
 
-settingBtn.onclick = ()=>{
-
-hideAll();
-removeActive();
-
-settingBtn.classList.add("active");
-
-settingsSection.style.display="block";
-
-};
 // ================= CHAT =================
 
 sendBtn.addEventListener("click", async () => {
@@ -358,7 +348,6 @@ const videoBtn = document.getElementById("videoBtn");
 const musicBtn = document.querySelectorAll(".menu")[3];
 const pdfBtn = document.querySelectorAll(".menu")[4];
 const codeBtn = document.querySelectorAll(".menu")[5];
-const settingsBtn = document.querySelectorAll(".menu")[6];
 
 const chatSection = document.getElementById("chatSection");
 const videoSection = document.getElementById("videoSection");
