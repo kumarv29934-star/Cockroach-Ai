@@ -1,8 +1,12 @@
-// ================= CONFIG =================
+// ========================================
+// COCKROACH AI v4
+// PART A - CONFIG + VARIABLES + SIDEBAR
+// ========================================
 
+// Backend URL
 const BACKEND_URL = "https://cockroach-ai-backend.onrender.com";
 
-// ================= BUTTONS =================
+// ========= SIDEBAR BUTTONS =========
 
 const chatBtn = document.getElementById("chatBtn");
 const imageBtn = document.getElementById("imageBtn");
@@ -10,9 +14,9 @@ const videoBtn = document.getElementById("videoBtn");
 const musicBtn = document.getElementById("musicBtn");
 const pdfBtn = document.getElementById("pdfBtn");
 const codeBtn = document.getElementById("codeBtn");
-const settingBtn = document.getElementById("settingBtn");
+const settingsBtn = document.getElementById("settingsBtn");
 
-// ================= SECTIONS =================
+// ========= SECTIONS =========
 
 const chatSection = document.getElementById("chatSection");
 const imageSection = document.getElementById("imageSection");
@@ -22,361 +26,379 @@ const pdfSection = document.getElementById("pdfSection");
 const codeSection = document.getElementById("codeSection");
 const settingsSection = document.getElementById("settingsSection");
 
-// ================= CHAT =================
+// ========= CHAT =========
 
 const sendBtn = document.getElementById("sendBtn");
 const prompt = document.getElementById("prompt");
 const chatArea = document.getElementById("chatArea");
 
-// ================= IMAGE =================
+// ========= IMAGE =========
 
-const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
+const generateImageBtn = document.getElementById("generateImageBtn");
 const imageResult = document.getElementById("imageResult");
 
-// ================= VIDEO =================
+// ========= VIDEO =========
 
-const generateVideoBtn = document.getElementById("generateVideoBtn");
 const videoPrompt = document.getElementById("videoPrompt");
+const videoImage = document.getElementById("videoImage");
+const generateVideoBtn = document.getElementById("generateVideoBtn");
 const videoStatus = document.getElementById("videoStatus");
 const videoResult = document.getElementById("videoResult");
 
-// ================= CREDITS =================
+// ========= CREDIT =========
 
 const creditCount = document.getElementById("creditCount");
 
-// ================= FUNCTIONS =================
+// ========================================
+// FUNCTIONS
+// ========================================
 
-function hideAll() {
+function hideAllSections() {
 
-chatSection.style.display = "none";
-imageSection.style.display = "none";
-videoSection.style.display = "none";
-musicSection.style.display = "none";
-pdfSection.style.display = "none";
-codeSection.style.display = "none";
-settingsSection.style.display = "none";
-
-}
-
-function removeActive(){
-
-document.querySelectorAll(".menu").forEach(btn=>{
-btn.classList.remove("active");
-});
+    chatSection.style.display = "none";
+    imageSection.style.display = "none";
+    videoSection.style.display = "none";
+    musicSection.style.display = "none";
+    pdfSection.style.display = "none";
+    codeSection.style.display = "none";
+    settingsSection.style.display = "none";
 
 }
 
-// ================= SIDEBAR =================
+function removeActiveMenu() {
 
-chatBtn.onclick = ()=>{
+    document.querySelectorAll(".menu").forEach(btn => {
+        btn.classList.remove("active");
+    });
 
-hideAll();
-removeActive();
+}
 
-chatBtn.classList.add("active");
+function openSection(button, section) {
 
-chatSection.style.display="block";
+    hideAllSections();
 
-};
+    removeActiveMenu();
 
-chatBtn.addEventListener("click", () => {
-  hideAll();
-  chatSection.style.display = "block";
-});
+    button.classList.add("active");
 
-imageBtn.addEventListener("click", () => {
-  hideAll();
-  imageSection.style.display = "block";
-});
+    section.style.display = "block";
 
-videoBtn.addEventListener("click", () => {
-  hideAll();
-  videoSection.style.display = "block";
-});
+}
 
-musicBtn.addEventListener("click", () => {
-  hideAll();
-  musicSection.style.display = "block";
-});
+// ========================================
+// SIDEBAR EVENTS
+// ========================================
 
-pdfBtn.addEventListener("click", () => {
-  hideAll();
-  pdfSection.style.display = "block";
-});
+chatBtn.onclick = () => openSection(chatBtn, chatSection);
 
-codeBtn.addEventListener("click", () => {
-  hideAll();
-  codeSection.style.display = "block";
-});
+imageBtn.onclick = () => openSection(imageBtn, imageSection);
 
-settingsBtn.addEventListener("click", () => {
-  hideAll();
-  settingsSection.style.display = "block";
-});
+videoBtn.onclick = () => openSection(videoBtn, videoSection);
 
-// ================= CHAT =================
+musicBtn.onclick = () => openSection(musicBtn, musicSection);
+
+pdfBtn.onclick = () => openSection(pdfBtn, pdfSection);
+
+codeBtn.onclick = () => openSection(codeBtn, codeSection);
+
+settingsBtn.onclick = () => openSection(settingsBtn, settingsSection);
+// ========================================
+// PART B - AI CHAT
+// ========================================
+
+function addUserMessage(text) {
+
+    chatArea.innerHTML += `
+        <div class="user-message">
+            ${text}
+        </div>
+    `;
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+}
+
+function addAIMessage(text) {
+
+    chatArea.innerHTML += `
+        <div class="ai-message">
+            ${text}
+        </div>
+    `;
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+}
 
 sendBtn.addEventListener("click", async () => {
 
-const text = prompt.value.trim();
+    const text = prompt.value.trim();
 
-if(!text){
-alert("Enter a message");
-return;
+    if (!text) {
+        alert("Please enter a message.");
+        return;
+    }
+
+    addUserMessage(text);
+
+    prompt.value = "";
+
+    addAIMessage("🤖 Thinking...");
+
+    const aiMessages = document.querySelectorAll(".ai-message");
+    const lastAI = aiMessages[aiMessages.length - 1];
+
+    try {
+
+        const response = await fetch(`${BACKEND_URL}/chat`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                message: text
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            lastAI.innerHTML = data.reply;
+
+        } else {
+
+            lastAI.innerHTML = "❌ " + data.message;
+
+        }
+
+    } catch (err) {
+
+        lastAI.innerHTML = "❌ Backend connection failed.";
+
+    }
+
+});
+
+prompt.addEventListener("keydown", function (e) {
+
+    if (e.key === "Enter" && !e.shiftKey) {
+
+        e.preventDefault();
+
+        sendBtn.click();
+
+    }
+
+});
+// ========================================
+// PART C - IMAGE GENERATOR
+// ========================================
+
+generateImageBtn.addEventListener("click", async () => {
+
+    const text = imagePrompt.value.trim();
+
+    if (!text) {
+        alert("Please enter an image prompt.");
+        return;
+    }
+
+    imageResult.innerHTML = "⏳ Generating image...";
+
+    try {
+
+        const response = await fetch(`${BACKEND_URL}/generate-image`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                prompt: text
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+
+            imageResult.innerHTML = "❌ " + data.message;
+            return;
+
+        }
+
+        imageResult.innerHTML = "";
+
+        data.images.forEach((img, index) => {
+
+            imageResult.innerHTML += `
+
+            <div style="margin-top:20px;">
+
+                <img
+                    src="${img}"
+                    style="
+                        width:100%;
+                        border-radius:15px;
+                        border:2px solid #00ffd5;
+                    ">
+
+                <br><br>
+
+                <a
+                    href="${img}"
+                    target="_blank"
+                    style="
+                        display:inline-block;
+                        background:#00ffd5;
+                        color:black;
+                        padding:10px 18px;
+                        border-radius:10px;
+                        text-decoration:none;
+                        font-weight:bold;
+                    ">
+
+                    ⬇ Download Image ${index + 1}
+
+                </a>
+
+            </div>
+
+            `;
+
+        });
+
+        creditCount.innerText = Number(creditCount.innerText) - 10;
+
+    } catch (err) {
+
+        imageResult.innerHTML = "❌ Image generation failed.";
+
+    }
+
+});
+// ========================================
+// PART D - VIDEO GENERATOR
+// ========================================
+
+generateVideoBtn.addEventListener("click", async () => {
+
+    const text = videoPrompt.value.trim();
+
+    if (!text) {
+        alert("Please enter a video prompt.");
+        return;
+    }
+
+    videoStatus.innerHTML = "⏳ Starting video generation...";
+    videoResult.innerHTML = "";
+
+    try {
+
+        const body = {
+            prompt: text
+        };
+
+        // Agar image select ki gayi hai to abhi sirf info dikha do.
+        // Backend image upload support hone ke baad isko enable karenge.
+        if (videoImage && videoImage.files.length > 0) {
+            videoStatus.innerHTML =
+                "🖼 Image selected. Image-to-Video support will be enabled in the next backend update...";
+        }
+
+        const response = await fetch(`${BACKEND_URL}/generate-video`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(body)
+
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+
+            videoStatus.innerHTML = "❌ " + (data.message || "Video generation failed.");
+
+            return;
+
+        }
+
+        videoStatus.innerHTML = "✅ Video request submitted.";
+
+        videoResult.innerHTML = `
+            <div class="result-card">
+
+                <p><b>Generation ID</b></p>
+
+                <p>${data.id}</p>
+
+                <br>
+
+                <p><b>Status</b></p>
+
+                <p>${data.state}</p>
+
+                <br>
+
+                <p>Refresh after a few seconds to check progress.</p>
+
+            </div>
+        `;
+
+        creditCount.innerText =
+            Number(creditCount.innerText) - 20;
+
+    } catch (err) {
+
+        console.log(err);
+
+        videoStatus.innerHTML = "❌ Backend connection failed.";
+
+    }
+
+});
+// ========================================
+// PART E - FINAL INIT
+// ========================================
+
+// Open Chat by default
+hideAllSections();
+chatSection.style.display = "block";
+chatBtn.classList.add("active");
+
+// Welcome message
+if (chatArea) {
+    chatArea.innerHTML = `
+    <div class="ai-message">
+        👋 Welcome to <b>Cockroach AI v4</b><br><br>
+        Powered by Gemini • Qwen • Luma AI
+    </div>
+    `;
 }
 
-chatArea.innerHTML += `
-<div class="user-message">
-${text}
-</div>
-`;
-
-prompt.value="";
-
-const loading=document.createElement("div");
-
-loading.className="ai-message";
-
-loading.innerHTML="🤖 Thinking...";
-
-chatArea.appendChild(loading);
-
-try{
-
-const response=await fetch(`${BACKEND_URL}/chat`,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-message:text
+// Backend status check
+fetch(`${BACKEND_URL}/`)
+.then(res => res.json())
+.then(data => {
+    console.log("✅ Backend Connected:", data);
 })
-
+.catch(() => {
+    console.log("❌ Backend Offline");
 });
 
-const data=await response.json();
-
-loading.innerHTML=data.success
-?data.reply
-:"❌ "+data.message;
-
-}catch(e){
-
-loading.innerHTML="❌ Backend Error";
-
-}
-
-chatArea.scrollTop=chatArea.scrollHeight;
-
-});
-
-// ================= IMAGE =================
-
-generateImageBtn.addEventListener("click",async()=>{
-
-const text=imagePrompt.value.trim();
-
-if(!text){
-alert("Enter image prompt");
-return;
-}
-
-imageResult.innerHTML="⏳ Generating Image...";
-
-try{
-
-const response=await fetch(`${BACKEND_URL}/generate-image`,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-prompt:text
-})
-
-});
-
-const data=await response.json();
-
-if(!data.success){
-
-imageResult.innerHTML="❌ "+JSON.stringify(data.message);
-
-return;
-
-}
-
-imageResult.innerHTML="";
-
-data.images.forEach(img=>{
-
-imageResult.innerHTML+=`
-
-<img
-src="${img}"
-style="
-width:100%;
-border-radius:15px;
-margin-top:20px;
-">
-
-`;
-
-});
-
-creditCount.innerText=
-Number(creditCount.innerText)-10;
-
-}catch(e){
-
-imageResult.innerHTML="❌ Failed";
-
-}
-
-});
-
-// ================= VIDEO =================
-
-generateVideoBtn.addEventListener("click",async()=>{
-
-const text=videoPrompt.value.trim();
-
-if(!text){
-
-alert("Enter video prompt");
-
-return;
-
-}
-
-videoStatus.innerHTML="⏳ Generating Video...";
-
-videoResult.innerHTML="";
-
-try{
-
-const response=await fetch(`${BACKEND_URL}/generate-video`,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-prompt:text
-})
-
-});
-
-const data=await response.json();
-
-if(!data.success){
-
-videoStatus.innerHTML="❌ "+JSON.stringify(data.message);
-
-return;
-
-}
-
-videoStatus.innerHTML="✅ Video Started";
-
-videoResult.innerHTML=`
-
-<p>
-
-Generation ID:
-
-<br>
-
-<b>${data.id}</b>
-
-</p>
-
-<p>
-
-Status:
-
-<b>${data.state}</b>
-
-</p>
-
-`;
-
-creditCount.innerText=
-Number(creditCount.innerText)-20;
-
-}catch(e){
-
-videoStatus.innerHTML="❌ Backend Error";
-
-}
-
-});
-// ================= PAGE SWITCH =================
-
-const chatBtn = document.getElementById("chatBtn");
-const videoBtn = document.getElementById("videoBtn");
-
-const musicBtn = document.querySelectorAll(".menu")[3];
-const pdfBtn = document.querySelectorAll(".menu")[4];
-const codeBtn = document.querySelectorAll(".menu")[5];
-
-const chatSection = document.getElementById("chatSection");
-const videoSection = document.getElementById("videoSection");
-const musicSection = document.getElementById("musicSection");
-const pdfSection = document.getElementById("pdfSection");
-const codeSection = document.getElementById("codeSection");
-const settingsSection = document.getElementById("settingsSection");
-
-function hideAll() {
-  chatSection.style.display = "none";
-  imageSection.style.display = "none";
-  videoSection.style.display = "none";
-  musicSection.style.display = "none";
-  pdfSection.style.display = "none";
-  codeSection.style.display = "none";
-  settingsSection.style.display = "none";
-}
-
-chatBtn.onclick = () => {
-  hideAll();
-  chatSection.style.display = "block";
-};
-
-imageBtn.onclick = () => {
-  hideAll();
-  imageSection.style.display = "block";
-};
-
-videoBtn.onclick = () => {
-  hideAll();
-  videoSection.style.display = "block";
-};
-
-musicBtn.onclick = () => {
-  hideAll();
-  musicSection.style.display = "block";
-};
-
-pdfBtn.onclick = () => {
-  hideAll();
-  pdfSection.style.display = "block";
-};
-
-codeBtn.onclick = () => {
-  hideAll();
-  codeSection.style.display = "block";
-};
-
-settingsBtn.onclick = () => {
-  hideAll();
-  settingsSection.style.display = "block";
-};
+// Prevent null errors
+console.log("🚀 Cockroach AI Loaded Successfully");
