@@ -80,60 +80,40 @@ chatSection.style.display="block";
 
 };
 
-imageBtn.onclick = ()=>{
+chatBtn.addEventListener("click", () => {
+  hideAll();
+  chatSection.style.display = "block";
+});
 
-hideAll();
-removeActive();
+imageBtn.addEventListener("click", () => {
+  hideAll();
+  imageSection.style.display = "block";
+});
 
-imageBtn.classList.add("active");
+videoBtn.addEventListener("click", () => {
+  hideAll();
+  videoSection.style.display = "block";
+});
 
-imageSection.style.display="block";
+musicBtn.addEventListener("click", () => {
+  hideAll();
+  musicSection.style.display = "block";
+});
 
-};
+pdfBtn.addEventListener("click", () => {
+  hideAll();
+  pdfSection.style.display = "block";
+});
 
-videoBtn.onclick = ()=>{
+codeBtn.addEventListener("click", () => {
+  hideAll();
+  codeSection.style.display = "block";
+});
 
-hideAll();
-removeActive();
-
-videoBtn.classList.add("active");
-
-videoSection.style.display="block";
-
-};
-
-musicBtn.onclick = ()=>{
-
-hideAll();
-removeActive();
-
-musicBtn.classList.add("active");
-
-musicSection.style.display="block";
-
-};
-
-pdfBtn.onclick = ()=>{
-
-hideAll();
-removeActive();
-
-pdfBtn.classList.add("active");
-
-pdfSection.style.display="block";
-
-};
-
-codeBtn.onclick = ()=>{
-
-hideAll();
-removeActive();
-
-codeBtn.classList.add("active");
-
-codeSection.style.display="block";
-
-};
+settingsBtn.addEventListener("click", () => {
+  hideAll();
+  settingsSection.style.display = "block";
+});
 
 // ================= CHAT =================
 
