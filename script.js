@@ -1,250 +1,352 @@
+// ================= CONFIG =================
+
+const BACKEND_URL = "https://cockroach-ai-backend.onrender.com";
+
+// ================= BUTTONS =================
+
+const chatBtn = document.getElementById("chatBtn");
+const imageBtn = document.getElementById("imageBtn");
+const videoBtn = document.getElementById("videoBtn");
+const musicBtn = document.getElementById("musicBtn");
+const pdfBtn = document.getElementById("pdfBtn");
+const codeBtn = document.getElementById("codeBtn");
+const settingBtn = document.getElementById("settingBtn");
+
+// ================= SECTIONS =================
+
+const chatSection = document.getElementById("chatSection");
+const imageSection = document.getElementById("imageSection");
+const videoSection = document.getElementById("videoSection");
+const musicSection = document.getElementById("musicSection");
+const pdfSection = document.getElementById("pdfSection");
+const codeSection = document.getElementById("codeSection");
+const settingsSection = document.getElementById("settingsSection");
+
+// ================= CHAT =================
+
 const sendBtn = document.getElementById("sendBtn");
 const prompt = document.getElementById("prompt");
 const chatArea = document.getElementById("chatArea");
-const newChatBtn = document.getElementById("newChatBtn");
 
-// IMAGE ELEMENTS
-const imageBtn = document.getElementById("imageBtn");
-const imageSection = document.getElementById("imageSection");
+// ================= IMAGE =================
+
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
 const imageResult = document.getElementById("imageResult");
 
-const BACKEND_URL = "https://cockroach-ai-backend.onrender.com";
+// ================= VIDEO =================
 
-/* ================= CHAT ================= */
+const generateVideoBtn = document.getElementById("generateVideoBtn");
+const videoPrompt = document.getElementById("videoPrompt");
+const videoStatus = document.getElementById("videoStatus");
+const videoResult = document.getElementById("videoResult");
 
-function welcomeMessage() {
-  chatArea.innerHTML = `
-  <div class="ai-message">
-  👋 Welcome to Cockroach AI!<br><br>
-  How can I help you today?
-  </div>
-  `;
+// ================= CREDITS =================
+
+const creditCount = document.getElementById("creditCount");
+
+// ================= FUNCTIONS =================
+
+function hideAll() {
+
+chatSection.style.display = "none";
+imageSection.style.display = "none";
+videoSection.style.display = "none";
+musicSection.style.display = "none";
+pdfSection.style.display = "none";
+codeSection.style.display = "none";
+settingsSection.style.display = "none";
+
 }
 
-newChatBtn.addEventListener("click", () => {
-  welcomeMessage();
-  prompt.value = "";
+function removeActive(){
+
+document.querySelectorAll(".menu").forEach(btn=>{
+btn.classList.remove("active");
 });
 
-/* SEND CHAT */
+}
+
+// ================= SIDEBAR =================
+
+chatBtn.onclick = ()=>{
+
+hideAll();
+removeActive();
+
+chatBtn.classList.add("active");
+
+chatSection.style.display="block";
+
+};
+
+imageBtn.onclick = ()=>{
+
+hideAll();
+removeActive();
+
+imageBtn.classList.add("active");
+
+imageSection.style.display="block";
+
+};
+
+videoBtn.onclick = ()=>{
+
+hideAll();
+removeActive();
+
+videoBtn.classList.add("active");
+
+videoSection.style.display="block";
+
+};
+
+musicBtn.onclick = ()=>{
+
+hideAll();
+removeActive();
+
+musicBtn.classList.add("active");
+
+musicSection.style.display="block";
+
+};
+
+pdfBtn.onclick = ()=>{
+
+hideAll();
+removeActive();
+
+pdfBtn.classList.add("active");
+
+pdfSection.style.display="block";
+
+};
+
+codeBtn.onclick = ()=>{
+
+hideAll();
+removeActive();
+
+codeBtn.classList.add("active");
+
+codeSection.style.display="block";
+
+};
+
+settingBtn.onclick = ()=>{
+
+hideAll();
+removeActive();
+
+settingBtn.classList.add("active");
+
+settingsSection.style.display="block";
+
+};
+// ================= CHAT =================
 
 sendBtn.addEventListener("click", async () => {
 
-  const text = prompt.value.trim();
+const text = prompt.value.trim();
 
-  if (!text) {
-    alert("Please enter a prompt.");
-    return;
-  }
+if(!text){
+alert("Enter a message");
+return;
+}
 
-  const userMsg = document.createElement("div");
-  userMsg.className = "user-message";
-  userMsg.innerHTML = text;
-  chatArea.appendChild(userMsg);
+chatArea.innerHTML += `
+<div class="user-message">
+${text}
+</div>
+`;
 
-  const aiMsg = document.createElement("div");
-  aiMsg.className = "ai-message";
-  aiMsg.innerHTML = "🤖 Thinking...";
-  chatArea.appendChild(aiMsg);
+prompt.value="";
 
-  chatArea.scrollTop = chatArea.scrollHeight;
+const loading=document.createElement("div");
 
-  prompt.value = "";
+loading.className="ai-message";
 
-  try {
+loading.innerHTML="🤖 Thinking...";
 
-    const response = await fetch(`${BACKEND_URL}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message: text })
-    });
+chatArea.appendChild(loading);
 
-    const data = await response.json();
+try{
 
-    if (data.success) {
-      aiMsg.innerHTML = "🤖 " + data.reply;
-    } else {
-      aiMsg.innerHTML = "❌ " + data.reply;
-    }
+const response=await fetch(`${BACKEND_URL}/chat`,{
 
-  } catch (error) {
-    aiMsg.innerHTML = "❌ Unable to connect to Cockroach AI.";
-  }
+method:"POST",
 
-  chatArea.scrollTop = chatArea.scrollHeight;
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+message:text
+})
 
 });
 
-/* ================= IMAGE MODE OPEN ================= */
+const data=await response.json();
 
-imageBtn.addEventListener("click", () => {
+loading.innerHTML=data.success
+?data.reply
+:"❌ "+data.message;
 
-  chatArea.style.display = "none";
-  imageSection.style.display = "block";
+}catch(e){
 
-});
-/* ================= REAL IMAGE GENERATION ================= */
+loading.innerHTML="❌ Backend Error";
 
-generateImageBtn.addEventListener("click", async () => {
+}
 
-  const promptText = imagePrompt.value.trim();
-
-  if (!promptText) {
-    alert("Please enter image prompt");
-    return;
-  }
-
-  imageResult.innerHTML = `
-  <div class="loading">
-  ⏳ Generating 2 AI Images...
-  </div>
-  `;
-
-  try {
-
-    const response = await fetch(`${BACKEND_URL}/generate-image`, {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        prompt: promptText
-      })
-
-    });
-
-    const data = await response.json();
-
-    if (!data.success) {
-
-      imageResult.innerHTML = `
-      <div class="loading">
-      ❌ ${data.message}
-      </div>
-      `;
-
-      return;
-
-    }
-
-    imageResult.innerHTML = "";
-
-    data.images.forEach((img, index) => {
-
-      imageResult.innerHTML += `
-
-      <div style="margin-top:25px">
-
-      <img
-      src="${img}"
-      style="
-      width:100%;
-      max-width:512px;
-      border-radius:15px;
-      border:2px solid #00ffd5;
-      ">
-
-      <br><br>
-
-      <a
-      href="${img}"
-      download="Cockroach-AI-${index+1}.png"
-      style="
-      background:#00ffd5;
-      color:black;
-      padding:10px 20px;
-      border-radius:10px;
-      text-decoration:none;
-      font-weight:bold;
-      ">
-
-      ⬇️ Download Image ${index+1}
-
-      </a>
-
-      </div>
-
-      `;
-
-    });
-
-    let credit = document.getElementById("creditCount");
-
-    credit.innerText = Number(credit.innerText) - 10;
-
-  }
-
-  catch(err){
-
-    console.log(err);
-
-    imageResult.innerHTML=`
-    <div class="loading">
-    ❌ Image Generation Failed
-    </div>
-    `;
-
- }
+chatArea.scrollTop=chatArea.scrollHeight;
 
 });
 
-prompt.addEventListener("keydown", function (e) {
+// ================= IMAGE =================
 
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendBtn.click();
-  }
+generateImageBtn.addEventListener("click",async()=>{
+
+const text=imagePrompt.value.trim();
+
+if(!text){
+alert("Enter image prompt");
+return;
+}
+
+imageResult.innerHTML="⏳ Generating Image...";
+
+try{
+
+const response=await fetch(`${BACKEND_URL}/generate-image`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+prompt:text
+})
 
 });
-document.getElementById("generateBtn").addEventListener("click", async () => {
 
-  const prompt = document.getElementById("prompt").value.trim();
+const data=await response.json();
 
-  if (!prompt) {
-    alert("Please enter a prompt");
-    return;
-  }
+if(!data.success){
 
-  document.getElementById("status").innerHTML = "⏳ Generating Video...";
+imageResult.innerHTML="❌ "+JSON.stringify(data.message);
 
-  try {
+return;
 
-    const response = await fetch(`${BACKEND_URL}/generate-video`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        prompt: prompt
-      })
-    });
+}
 
-    const data = await response.json();
+imageResult.innerHTML="";
 
-    if (data.success) {
+data.images.forEach(img=>{
 
-      document.getElementById("status").innerHTML =
-      "✅ Video request sent.<br>ID: " + data.id;
+imageResult.innerHTML+=`
 
-    } else {
+<img
+src="${img}"
+style="
+width:100%;
+border-radius:15px;
+margin-top:20px;
+">
 
-      document.getElementById("status").innerHTML =
-      "❌ " + JSON.stringify(data.message);
+`;
 
-    }
+});
 
-  } catch (err) {
+creditCount.innerText=
+Number(creditCount.innerText)-10;
 
-    document.getElementById("status").innerHTML =
-    "❌ Failed to connect backend";
+}catch(e){
 
-  }
+imageResult.innerHTML="❌ Failed";
+
+}
+
+});
+
+// ================= VIDEO =================
+
+generateVideoBtn.addEventListener("click",async()=>{
+
+const text=videoPrompt.value.trim();
+
+if(!text){
+
+alert("Enter video prompt");
+
+return;
+
+}
+
+videoStatus.innerHTML="⏳ Generating Video...";
+
+videoResult.innerHTML="";
+
+try{
+
+const response=await fetch(`${BACKEND_URL}/generate-video`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+prompt:text
+})
+
+});
+
+const data=await response.json();
+
+if(!data.success){
+
+videoStatus.innerHTML="❌ "+JSON.stringify(data.message);
+
+return;
+
+}
+
+videoStatus.innerHTML="✅ Video Started";
+
+videoResult.innerHTML=`
+
+<p>
+
+Generation ID:
+
+<br>
+
+<b>${data.id}</b>
+
+</p>
+
+<p>
+
+Status:
+
+<b>${data.state}</b>
+
+</p>
+
+`;
+
+creditCount.innerText=
+Number(creditCount.innerText)-20;
+
+}catch(e){
+
+videoStatus.innerHTML="❌ Backend Error";
+
+}
 
 });
