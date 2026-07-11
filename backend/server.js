@@ -131,8 +131,49 @@ app.post("/generate-image", async (req, res) => {
 });
 
 // ================= VIDEO =================
-// Luma AI Video API yahan add karenge
+app.post("/generate-video", async (req, res) => {
+  try {
+    const { prompt } = req.body;
 
+    if (!prompt) {
+      return res.status(400).json({
+        success: false,
+        message: "Prompt is required."
+      });
+    }
+
+    const response = await axios.post(
+      "https://api.lumalabs.ai/dream-machine/v1/generations",
+      {
+        prompt: prompt,
+        aspect_ratio: "9:16",
+        loop: false
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.LUMA_API_KEY}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    res.json({
+      success: true,
+      id: response.data.id,
+      state: response.data.state,
+      data: response.data
+    });
+
+  } catch (err) {
+    console.error("LUMA ERROR:");
+    console.error(err.response?.data || err.message);
+
+    res.status(500).json({
+      success: false,
+      message: err.response?.data || err.message
+    });
+  }
+});
 // ================= SERVER =================
 
 const PORT = process.env.PORT || 3000;
