@@ -13,7 +13,9 @@ app.use(express.json());
 // ================= GEMINI =================
 
 const ai = new GoogleGenAI({
+
     apiKey: process.env.GEMINI_API_KEY
+
 });
 
 // ================= HOME =================
@@ -23,8 +25,11 @@ app.get("/", (req, res) => {
     res.json({
 
         success: true,
+
         name: "Cockroach AI Backend",
-        version: "5.0.0",
+
+        version: "6.0.0",
+
         status: "Running"
 
     });
@@ -38,8 +43,11 @@ app.get("/test", (req, res) => {
     res.json({
 
         gemini: process.env.GEMINI_API_KEY ? "OK" : "Missing",
+
         qwen: process.env.DASHSCOPE_API_KEY ? "OK" : "Missing",
-        workspace: process.env.QWEN_WORKSPACE_ID,
+
+        workspace: process.env.QWEN_WORKSPACE_ID || "Missing",
+
         luma: process.env.LUMA_API_KEY ? "OK" : "Missing"
 
     });
@@ -56,13 +64,15 @@ app.post("/chat", async (req, res) => {
         if (!message) {
 
             return res.status(400).json({
+
                 success: false,
                 reply: "Message is required."
+
             });
 
         }
 
-        const response = await ai.models.generateContent({
+        const result = await ai.models.generateContent({
 
             model: "gemini-2.5-flash",
 
@@ -74,26 +84,27 @@ app.post("/chat", async (req, res) => {
 
             success: true,
 
-            reply: response.text
+            reply: result.text
 
         });
 
     } catch (err) {
 
-        console.error(err);
+        console.error("CHAT ERROR:");
+        console.error(err.response?.data || err.message);
 
         res.status(500).json({
 
             success: false,
 
-            reply: "Gemini Error"
+            reply: "Gemini Chat Error"
 
         });
 
     }
 
 });
-// ================= IMAGE =================
+// ================= IMAGE GENERATOR =================
 
 app.post("/generate-image", async (req, res) => {
 
@@ -115,79 +126,69 @@ app.post("/generate-image", async (req, res) => {
             `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
 
             {
-
                 model: "qwen-image-2.0-pro",
 
                 input: {
-
                     messages: [
-
                         {
-
                             role: "user",
-
                             content: [
-
                                 {
                                     text: prompt
                                 }
-
                             ]
-
                         }
-
                     ]
-
                 },
 
                 parameters: {
-
                     size: "1024*1024",
                     watermark: false,
                     prompt_extend: true
-
                 }
-
             },
 
             {
-
                 headers: {
-
                     Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`,
                     "Content-Type": "application/json"
-
                 }
-
             }
 
         );
 
-        const image =
-        response.data.output.choices[0].message.content[0].image;
+        const imageUrl =
+            response.data.output.choices[0].message.content[0].image;
 
         res.json({
 
             success: true,
 
-            images: [image]
+            images: [imageUrl]
 
         });
 
     } catch (err) {
 
-    console.error("FULL ERROR:");
-    console.error(JSON.stringify(err.response?.data || err.message, null, 2));
+        console.error("IMAGE ERROR:");
+        console.error(JSON.stringify(err.response?.data || err.message, null, 2));
 
-    res.status(500).json({
-        success: false,
-        message: JSON.stringify(err.response?.data || err.message)
-    });
+        res.status(500).json({
+
+            success: false,
+
+            message:
+                err.response?.data?.message ||
+                err.response?.data?.detail ||
+                err.message ||
+                "Image generation failed"
+
+        });
 
     }
 
 });
-// ================= VIDEO (LUMA AGENTS) =================
+// ================= VIDEO GENERATOR =================
 
 app.post("/generate-video", async (req, res) => {
 
@@ -206,15 +207,15 @@ app.post("/generate-video", async (req, res) => {
 
         const response = await axios.post(
 
-            "https://api.lumalabs.ai/dream-machine/v1/generations",
+            "https://agents.lumalabs.ai/v1/generations",
 
             {
 
+                model: "ray-3",
+
                 prompt: prompt,
 
-                aspect_ratio: "9:16",
-
-                loop: false
+                aspect_ratio: "9:16"
 
             },
 
@@ -244,20 +245,24 @@ app.post("/generate-video", async (req, res) => {
 
     } catch (err) {
 
-        console.error(err.response?.data || err.message);
+        console.error("VIDEO ERROR:");
+        console.error(JSON.stringify(err.response?.data || err.message, null, 2));
 
         res.status(500).json({
 
             success: false,
 
-            message: err.response?.data || err.message
+            message:
+                err.response?.data?.detail ||
+                err.response?.data?.message ||
+                err.message ||
+                "Video generation failed"
 
         });
 
     }
 
 });
-
 // ================= VIDEO STATUS =================
 
 app.get("/video-status/:id", async (req, res) => {
@@ -266,13 +271,15 @@ app.get("/video-status/:id", async (req, res) => {
 
         const response = await axios.get(
 
-            `https://api.lumalabs.ai/dream-machine/v1/generations/${req.params.id}`,
+            `https://agents.lumalabs.ai/v1/generations/${req.params.id}`,
 
             {
 
                 headers: {
 
-                    Authorization: `Bearer ${process.env.LUMA_API_KEY}`
+                    Authorization: `Bearer ${process.env.LUMA_API_KEY}`,
+
+                    "Content-Type": "application/json"
 
                 }
 
@@ -280,25 +287,35 @@ app.get("/video-status/:id", async (req, res) => {
 
         );
 
+        const generation = response.data;
+
         res.json({
 
             success: true,
 
-            state: response.data.state,
+            state: generation.state,
 
-            videoUrl: response.data.assets?.video || null
+            videoUrl:
+                generation.assets?.video ||
+                generation.output?.video ||
+                null
 
         });
 
     } catch (err) {
 
-        console.error(err.response?.data || err.message);
+        console.error("VIDEO STATUS ERROR:");
+        console.error(JSON.stringify(err.response?.data || err.message, null, 2));
 
         res.status(500).json({
 
             success: false,
 
-            message: err.response?.data || err.message
+            message:
+                err.response?.data?.detail ||
+                err.response?.data?.message ||
+                err.message ||
+                "Failed to get video status"
 
         });
 
