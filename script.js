@@ -264,7 +264,7 @@ generateImageBtn.addEventListener("click", async () => {
         if (!data.success) {
 
             imageResult.innerHTML =
-                "❌ " + (data.message || "Image generation failed.");
+"<pre>" + JSON.stringify(data, null, 2) + "</pre>";
 
             return;
 
