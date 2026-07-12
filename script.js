@@ -110,9 +110,6 @@ codeBtn.addEventListener("click", () => {
     openSection(codeBtn, codeSection);
 });
 
-settingsBtn.addEventListener("click", () => {
-    openSection(settingsBtn, settingsSection);
-});
 
 // ================= DEFAULT PAGE =================
 
@@ -352,20 +349,31 @@ generateVideoBtn.addEventListener("click", async () => {
 
                 <p><b>Generation ID:</b></p>
 
-                <p>${data.id}</p>
+                videoStatus.innerHTML = "✅ Video request submitted.";
 
-                <br>
+videoResult.innerHTML = `
+<div class="result-card">
 
-                <p><b>Status:</b></p>
+<h3>🎬 Video Submitted</h3>
 
-                <p>${data.state}</p>
+<p><b>Generation ID:</b></p>
 
-                <br>
+<p>${data.id}</p>
 
-                <p>Please wait while the AI generates your video.</p>
+<br>
 
-            </div>
-        `;
+<p><b>Status:</b></p>
+
+<p>${data.state}</p>
+
+<br>
+
+<p>Please wait while the AI generates your video.</p>
+
+</div>
+`;
+
+checkVideoStatus(data.id);
 
         // 1 Video = 1 Credits
         updateCredits(
