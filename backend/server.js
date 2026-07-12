@@ -126,7 +126,7 @@ app.post("/generate-image", async (req, res) => {
             `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
 
             {
-                model: "qwen-image-3.2",
+                model: "qwen-image-2.0-pro",
 
                 input: {
                     messages: [
@@ -206,18 +206,20 @@ app.post("/generate-video", async (req, res) => {
         }
 
         const response = await axios.post(
-
-            "https://agents.lumalabs.ai/v1/generations",
-
-            {
-
-                model: "ray-3.2",
-
-                prompt: prompt,
-
-                aspect_ratio: "9:16"
-
-            },
+    "https://agents.lumalabs.ai/v1/generations",
+    {
+        model: "ray-3.2",
+        type: "video",
+        prompt: prompt,
+        aspect_ratio: "9:16"
+    },
+    {
+        headers: {
+            Authorization: `Bearer ${process.env.LUMA_API_KEY}`,
+            "Content-Type": "application/json"
+        }
+    }
+);
 
             {
 
