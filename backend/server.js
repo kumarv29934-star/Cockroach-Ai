@@ -211,7 +211,7 @@ app.post("/generate-video", async (req, res) => {
 
             {
 
-                model: "ray-3",
+                model: "ray-3.2",
 
                 prompt: prompt,
 
