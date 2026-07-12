@@ -1,12 +1,13 @@
 // ==========================================
 // COCKROACH AI V5
 // SCRIPT PART 1
+// CONFIG + ELEMENTS
 // ==========================================
 
 // Backend URL
 const BACKEND_URL = "https://cockroach-ai-backend.onrender.com";
 
-// ================= BUTTONS =================
+// ================= SIDEBAR =================
 
 const chatBtn = document.getElementById("chatBtn");
 const imageBtn = document.getElementById("imageBtn");
@@ -46,7 +47,30 @@ const generateVideoBtn = document.getElementById("generateVideoBtn");
 const videoStatus = document.getElementById("videoStatus");
 const videoResult = document.getElementById("videoResult");
 
-// ================= CREDIT =================
+// ================= MUSIC =================
+
+const musicPrompt = document.getElementById("musicPrompt");
+const generateMusicBtn = document.getElementById("generateMusicBtn");
+const musicResult = document.getElementById("musicResult");
+
+// ================= PDF =================
+
+const pdfFile = document.getElementById("pdfFile");
+const pdfPrompt = document.getElementById("pdfPrompt");
+const chatPdfBtn = document.getElementById("chatPdfBtn");
+const pdfResult = document.getElementById("pdfResult");
+
+// ================= CODE =================
+
+const codePrompt = document.getElementById("codePrompt");
+const analyzeCodeBtn = document.getElementById("analyzeCodeBtn");
+const codeResult = document.getElementById("codeResult");
+
+// ================= SETTINGS =================
+
+const backendStatus = document.getElementById("backendStatus");
+
+// ================= CREDITS =================
 
 const creditCount = document.getElementById("creditCount");
 // ==========================================
@@ -68,7 +92,7 @@ function hideAllSections() {
 
 function removeActiveMenu() {
 
-    document.querySelectorAll(".menu").forEach(btn => {
+    document.querySelectorAll(".menu").forEach((btn) => {
         btn.classList.remove("active");
     });
 
@@ -110,8 +134,11 @@ codeBtn.addEventListener("click", () => {
     openSection(codeBtn, codeSection);
 });
 
+settingsBtn.addEventListener("click", () => {
+    openSection(settingsBtn, settingsSection);
+});
 
-// ================= DEFAULT PAGE =================
+// Default Page
 
 openSection(chatBtn, chatSection);
 // ==========================================
@@ -129,16 +156,18 @@ sendBtn.addEventListener("click", async () => {
     }
 
     chatArea.innerHTML += `
-        <div class="user-message">
-            ${text}
-        </div>
+    <div class="user-message">
+        ${text}
+    </div>
     `;
 
     prompt.value = "";
 
     const loading = document.createElement("div");
+
     loading.className = "ai-message";
     loading.innerHTML = "🤖 Thinking...";
+
     chatArea.appendChild(loading);
 
     chatArea.scrollTop = chatArea.scrollHeight;
@@ -162,14 +191,22 @@ sendBtn.addEventListener("click", async () => {
         const data = await response.json();
 
         if (data.success) {
+
             loading.innerHTML = data.reply;
+
         } else {
-            loading.innerHTML = "❌ " + (data.message || "Unknown error");
+
+            loading.innerHTML =
+                "❌ " + (data.message || "Unknown Error");
+
         }
 
     } catch (err) {
 
-        loading.innerHTML = "❌ Backend connection failed.";
+        console.log(err);
+
+        loading.innerHTML =
+            "❌ Backend Connection Failed.";
 
     }
 
@@ -177,12 +214,14 @@ sendBtn.addEventListener("click", async () => {
 
 });
 
-// Send message with Enter key
+// Send with Enter key
+
 prompt.addEventListener("keydown", (e) => {
 
     if (e.key === "Enter" && !e.shiftKey) {
 
         e.preventDefault();
+
         sendBtn.click();
 
     }
@@ -202,7 +241,7 @@ generateImageBtn.addEventListener("click", async () => {
         return;
     }
 
-    imageResult.innerHTML = "⏳ Generating image...";
+    imageResult.innerHTML = "⏳ Generating Image...";
 
     try {
 
@@ -244,12 +283,13 @@ generateImageBtn.addEventListener("click", async () => {
                     style="
                         width:100%;
                         border-radius:12px;
-                        margin-bottom:10px;
+                        margin-bottom:12px;
                     ">
 
                 <a
                     href="${img}"
                     target="_blank"
+                    download
                     style="
                         display:inline-block;
                         padding:10px 18px;
@@ -272,16 +312,17 @@ generateImageBtn.addEventListener("click", async () => {
 
         });
 
+        // 1 Image = 1 Credit
         updateCredits(
-Number(creditCount.innerText) - 1
-);
+            Number(creditCount.innerText) - 1
+        );
 
     } catch (err) {
 
         console.log(err);
 
         imageResult.innerHTML =
-            "❌ Backend connection failed.";
+            "❌ Backend Connection Failed.";
 
     }
 
@@ -300,7 +341,7 @@ generateVideoBtn.addEventListener("click", async () => {
         return;
     }
 
-    videoStatus.innerHTML = "⏳ Starting video generation...";
+    videoStatus.innerHTML = "⏳ Starting Video Generation...";
     videoResult.innerHTML = "";
 
     try {
@@ -309,11 +350,10 @@ generateVideoBtn.addEventListener("click", async () => {
             prompt: text
         };
 
-        // Future Image-to-Video support
         if (videoImage.files.length > 0) {
 
             videoStatus.innerHTML =
-                "🖼 Image selected. Image-to-Video support will be available after backend update.";
+            "🖼 Image selected. Image-to-Video support coming soon.";
 
         }
 
@@ -334,65 +374,57 @@ generateVideoBtn.addEventListener("click", async () => {
         if (!data.success) {
 
             videoStatus.innerHTML =
-                "❌ " + (data.message || "Video generation failed.");
+            "❌ " + (data.message || "Video generation failed.");
 
             return;
 
         }
 
-        videoStatus.innerHTML = "✅ Video request submitted.";
-        checkVideoStatus(data.id);
-        
-            <div class="result-card">
+        videoStatus.innerHTML = "✅ Video Request Submitted.";
 
-                <h3>🎬 Video Submitted</h3>
+        videoResult.innerHTML = `
+        <div class="result-card">
 
-                <p><b>Generation ID:</b></p>
+            <h3>🎬 Video Submitted</h3>
 
-                videoStatus.innerHTML = "✅ Video request submitted.";
+            <p><b>Generation ID</b></p>
 
-videoResult.innerHTML = `
-<div class="result-card">
+            <p>${data.id}</p>
 
-<h3>🎬 Video Submitted</h3>
+            <br>
 
-<p><b>Generation ID:</b></p>
+            <p><b>Status</b></p>
 
-<p>${data.id}</p>
+            <p>${data.state}</p>
 
-<br>
+            <br>
 
-<p><b>Status:</b></p>
+            <p>Please wait while the AI generates your video.</p>
 
-<p>${data.state}</p>
+        </div>
+        `;
 
-<br>
-
-<p>Please wait while the AI generates your video.</p>
-
-</div>
-`;
-
-checkVideoStatus(data.id);
-
-        // 1 Video = 1 Credits
+        // 1 Video = 1 Credit
         updateCredits(
-Number(creditCount.innerText) - 1
-);
+            Number(creditCount.innerText) - 1
+        );
+
+        // Start checking status
+        checkVideoStatus(data.id);
 
     } catch (err) {
 
         console.log(err);
 
         videoStatus.innerHTML =
-            "❌ Backend connection failed.";
+        "❌ Backend Connection Failed.";
 
     }
 
 });
 // ==========================================
 // SCRIPT PART 6
-// APP INIT + CREDIT SAVE
+// CREDIT SYSTEM + BACKEND CHECK
 // ==========================================
 
 // Load saved credits
@@ -402,8 +434,10 @@ if (savedCredits !== null) {
     creditCount.innerText = savedCredits;
 }
 
-// Save credits whenever they change
+// Update Credits
 function updateCredits(value) {
+
+    if (value < 0) value = 0;
 
     creditCount.innerText = value;
 
@@ -411,8 +445,12 @@ function updateCredits(value) {
 
 }
 
-// Backend check
+// Backend Status Check
 async function checkBackend() {
+
+    if (!backendStatus) return;
+
+    backendStatus.innerHTML = "Checking...";
 
     try {
 
@@ -420,17 +458,23 @@ async function checkBackend() {
 
         if (!response.ok) throw new Error();
 
-        console.log("✅ Cockroach AI Backend Connected");
+        const data = await response.json();
+
+        backendStatus.innerHTML = "🟢 Online";
+        console.log("✅ Backend Connected", data);
 
     } catch (err) {
 
+        backendStatus.innerHTML = "🔴 Offline";
         console.log("❌ Backend Offline");
 
     }
 
 }
 
+// Run backend check
 checkBackend();
+
 // ==========================================
 // SCRIPT PART 7
 // VIDEO STATUS CHECK
@@ -456,19 +500,20 @@ async function checkVideoStatus(videoId) {
         }
 
         videoStatus.innerHTML =
-            `🎬 Status : ${data.state}`;
+            `🎬 Status: ${data.state}`;
 
-        // If completed
+        // Video Ready
         if (data.state === "completed" && data.videoUrl) {
 
             videoResult.innerHTML = `
+            <div class="result-card">
 
                 <video
                     controls
                     style="
                         width:100%;
                         border-radius:12px;
-                        margin-top:20px;
+                        margin-bottom:15px;
                     ">
 
                     <source
@@ -477,17 +522,17 @@ async function checkVideoStatus(videoId) {
 
                 </video>
 
-                <br><br>
-
                 <a
                     href="${data.videoUrl}"
                     target="_blank"
+                    download
                     style="
-                        background:#00ffd5;
-                        color:black;
+                        display:inline-block;
                         padding:12px 20px;
-                        border-radius:10px;
+                        background:#00ffd5;
+                        color:#000;
                         text-decoration:none;
+                        border-radius:10px;
                         font-weight:bold;
                     ">
 
@@ -495,13 +540,14 @@ async function checkVideoStatus(videoId) {
 
                 </a>
 
+            </div>
             `;
 
             return;
 
         }
 
-        // Still generating
+        // Still Processing
         if (
             data.state === "queued" ||
             data.state === "processing"
@@ -524,4 +570,31 @@ async function checkVideoStatus(videoId) {
 
     }
 
-    }
+}
+// ==========================================
+// SCRIPT PART 8
+// APP INIT
+// ==========================================
+
+// Welcome Message
+if (chatArea) {
+
+    chatArea.innerHTML = `
+    <div class="ai-message">
+
+        👋 Welcome to <b>Cockroach AI v5</b>
+
+        <br><br>
+
+        Powered by Cockroach AI
+
+    </div>
+    `;
+
+}
+
+// Open Chat by Default
+openSection(chatBtn, chatSection);
+
+// App Loaded
+console.log("🚀 Cockroach AI v5 Loaded Successfully");
