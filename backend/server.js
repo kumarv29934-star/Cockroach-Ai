@@ -191,7 +191,7 @@ app.post("/generate-image", async (req, res) => {
 // ================= VIDEO GENERATOR =================
 
 app.post("/generate-video", async (req, res) => {
-
+    console.log("NEW VIDEO ROUTE WORKING");
     try {
 
         const { prompt } = req.body;
