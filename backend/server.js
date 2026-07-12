@@ -10,209 +10,301 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ================= GEMINI =================
+
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+    apiKey: process.env.GEMINI_API_KEY
 });
 
 // ================= HOME =================
 
 app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    name: "Cockroach AI Backend",
-    version: "4.0.0",
-    status: "Running",
-  });
+
+    res.json({
+
+        success: true,
+        name: "Cockroach AI Backend",
+        version: "5.0.0",
+        status: "Running"
+
+    });
+
 });
 
 // ================= TEST =================
 
 app.get("/test", (req, res) => {
-  res.json({
-    api: process.env.DASHSCOPE_API_KEY ? "OK" : "Missing",
-    workspace: process.env.QWEN_WORKSPACE_ID
-  });
-});
 
+    res.json({
+
+        gemini: process.env.GEMINI_API_KEY ? "OK" : "Missing",
+        qwen: process.env.DASHSCOPE_API_KEY ? "OK" : "Missing",
+        workspace: process.env.QWEN_WORKSPACE_ID,
+        luma: process.env.LUMA_API_KEY ? "OK" : "Missing"
+
+    });
+
+});
 // ================= CHAT =================
 
 app.post("/chat", async (req, res) => {
-  try {
-    const { message } = req.body;
 
-    if (!message) {
-      return res.status(400).json({
-        success: false,
-        reply: "Message is required.",
-      });
+    try {
+
+        const { message } = req.body;
+
+        if (!message) {
+
+            return res.status(400).json({
+                success: false,
+                reply: "Message is required."
+            });
+
+        }
+
+        const response = await ai.models.generateContent({
+
+            model: "gemini-2.5-flash",
+
+            contents: message
+
+        });
+
+        res.json({
+
+            success: true,
+
+            reply: response.text
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            reply: "Gemini Error"
+
+        });
+
     }
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: message,
-    });
-
-    res.json({
-      success: true,
-      reply: response.text,
-    });
-
-  } catch (err) {
-    console.log("FULL ERROR:");
-    console.log(JSON.stringify(err.response?.data || err.message, null, 2));
-
-    res.status(500).json({
-      success: false,
-      message: err.response?.data || err.message
-    });
-  }
 });
-
 // ================= IMAGE =================
 
 app.post("/generate-image", async (req, res) => {
-  try {
-    const { prompt } = req.body;
 
-    if (!prompt) {
-      return res.status(400).json({
-        success: false,
-        message: "Prompt is required."
-      });
-    }
+    try {
 
-    const response = await axios.post(
-      `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
-      {
-        model: "qwen-image-2.0-pro",
-        input: {
-          messages: [
+        const { prompt } = req.body;
+
+        if (!prompt) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Prompt is required."
+            });
+
+        }
+
+        const response = await axios.post(
+
+            `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
+
             {
-              role: "user",
-              content: [
-                {
-                  text: prompt
+
+                model: "qwen-image-2.0-pro",
+
+                input: {
+
+                    messages: [
+
+                        {
+
+                            role: "user",
+
+                            content: [
+
+                                {
+                                    text: prompt
+                                }
+
+                            ]
+
+                        }
+
+                    ]
+
+                },
+
+                parameters: {
+
+                    size: "1024*1024",
+                    watermark: false,
+                    prompt_extend: true
+
                 }
-              ]
+
+            },
+
+            {
+
+                headers: {
+
+                    Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`,
+                    "Content-Type": "application/json"
+
+                }
+
             }
-          ]
-        },
-        parameters: {
-          size: "1024*1024",
-          watermark: false,
-          prompt_extend: true
-        }
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`
-        }
-      }
-    );
 
-    console.log(
-JSON.stringify(response.data, null, 2)
-);
-    const image =
-      response.data.output.choices[0].message.content[0].image;
+        );
 
-    res.json({
-      success: true,
-      images: [image]
-    });
+        const image =
+        response.data.output.choices[0].message.content[0].image;
 
-  } catch (err) {
-    console.log("FULL ERROR:");
-    console.log(JSON.stringify(err.response?.data || err.message, null, 2));
+        res.json({
 
-    res.status(500).json({
-      success: false,
-      message: err.response?.data || err.message
-    });
-  }
-});
+            success: true,
 
-// ================= VIDEO =================
-app.post("/generate-video", async (req, res) => {
-  try {
-    const { prompt } = req.body;
+            images: [image]
 
-    if (!prompt) {
-      return res.status(400).json({
-        success: false,
-        message: "Prompt is required."
-      });
+        });
+
+    } catch (err) {
+
+        console.error(err.response?.data || err.message);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.response?.data || err.message
+
+        });
+
     }
 
-    const response = await axios.post(
-      "https://api.lumalabs.ai/dream-machine/v1/generations",
-      {
-        prompt: prompt,
-        aspect_ratio: "9:16",
-        loop: false
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.LUMA_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
-
-    res.json({
-      success: true,
-      id: response.data.id,
-      state: response.data.state,
-      data: response.data
-    });
-
-  } catch (err) {
-    console.error("LUMA ERROR:");
-    console.error(err.response?.data || err.message);
-
-    res.status(500).json({
-      success: false,
-      message: err.response?.data || err.message
-    });
-  }
 });
+// ================= VIDEO (LUMA AGENTS) =================
+
+app.post("/generate-video", async (req, res) => {
+
+    try {
+
+        const { prompt } = req.body;
+
+        if (!prompt) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Prompt is required."
+            });
+
+        }
+
+        const response = await axios.post(
+
+            "https://api.lumalabs.ai/dream-machine/v1/generations",
+
+            {
+
+                prompt: prompt,
+
+                aspect_ratio: "9:16",
+
+                loop: false
+
+            },
+
+            {
+
+                headers: {
+
+                    Authorization: `Bearer ${process.env.LUMA_API_KEY}`,
+
+                    "Content-Type": "application/json"
+
+                }
+
+            }
+
+        );
+
+        res.json({
+
+            success: true,
+
+            id: response.data.id,
+
+            state: response.data.state
+
+        });
+
+    } catch (err) {
+
+        console.error(err.response?.data || err.message);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.response?.data || err.message
+
+        });
+
+    }
+
+});
+
 // ================= VIDEO STATUS =================
 
 app.get("/video-status/:id", async (req, res) => {
 
-  try {
+    try {
 
-    const { id } = req.params;
+        const response = await axios.get(
 
-    const response = await axios.get(
+            `https://api.lumalabs.ai/dream-machine/v1/generations/${req.params.id}`,
 
-      `https://api.lumalabs.ai/dream-machine/v1/generations/${id}`,
+            {
 
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.LUMA_API_KEY}`
-        }
-      }
+                headers: {
 
-    );
+                    Authorization: `Bearer ${process.env.LUMA_API_KEY}`
 
-    res.json({
-      success: true,
-      state: response.data.state,
-      videoUrl: response.data.assets?.video || null
-    });
+                }
 
-  } catch (err) {
+            }
 
-    console.error(err.response?.data || err.message);
+        );
 
-    res.status(500).json({
-      success: false,
-      message: err.response?.data || err.message
-    });
+        res.json({
 
-  }
+            success: true,
+
+            state: response.data.state,
+
+            videoUrl: response.data.assets?.video || null
+
+        });
+
+    } catch (err) {
+
+        console.error(err.response?.data || err.message);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.response?.data || err.message
+
+        });
+
+    }
 
 });
 // ================= SERVER =================
@@ -220,5 +312,7 @@ app.get("/video-status/:id", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Cockroach AI Backend Running on Port ${PORT}`);
+
+    console.log(`🚀 Cockroach AI Backend Running on Port ${PORT}`);
+
 });
