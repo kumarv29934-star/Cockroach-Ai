@@ -176,15 +176,13 @@ app.post("/generate-image", async (req, res) => {
 
     } catch (err) {
 
-        console.error(err.response?.data || err.message);
+    console.error("FULL ERROR:");
+    console.error(JSON.stringify(err.response?.data || err.message, null, 2));
 
-        res.status(500).json({
-
-            success: false,
-
-            message: err.response?.data || err.message
-
-        });
+    res.status(500).json({
+        success: false,
+        message: JSON.stringify(err.response?.data || err.message)
+    });
 
     }
 
