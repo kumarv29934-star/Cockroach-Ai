@@ -174,6 +174,44 @@ app.post("/generate-video", async (req, res) => {
     });
   }
 });
+// ================= VIDEO STATUS =================
+
+app.get("/video-status/:id", async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const response = await axios.get(
+
+      `https://api.lumalabs.ai/dream-machine/v1/generations/${id}`,
+
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.LUMA_API_KEY}`
+        }
+      }
+
+    );
+
+    res.json({
+      success: true,
+      state: response.data.state,
+      videoUrl: response.data.assets?.video || null
+    });
+
+  } catch (err) {
+
+    console.error(err.response?.data || err.message);
+
+    res.status(500).json({
+      success: false,
+      message: err.response?.data || err.message
+    });
+
+  }
+
+});
 // ================= SERVER =================
 
 const PORT = process.env.PORT || 3000;
