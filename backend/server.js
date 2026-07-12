@@ -111,6 +111,9 @@ app.post("/generate-image", async (req, res) => {
       }
     );
 
+    console.log(
+JSON.stringify(response.data, null, 2)
+);
     const image =
       response.data.output.choices[0].message.content[0].image;
 
