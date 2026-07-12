@@ -1,10 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cockroach AI v5</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+<div class="logo">
+
+🐞 Cockroach AI
+
+</div>
+
+<button class="menu active" id="chatBtn">
+<i class="fa-solid fa-comments"></i>
+<span>AI Chat</span>
+</button>
+
+<button class="menu" id="imageBtn">
+<i class="fa-solid fa-image"></i>
+<span>Image Generator</span>
+</button>
+
+<button class="menu" id="videoBtn">
+<i class="fa-solid fa-video"></i>
+<span>Video Generator</span>
+</button>
+
+<button class="menu" id="musicBtn">
+<i class="fa-solid fa-music"></i>
+<span>Music AI</span>
+</button>
+
+<button class="menu" id="pdfBtn">
+<i class="fa-solid fa-file-pdf"></i>
+<span>PDF Chat</span>
+</button>
+
+<button class="menu" id="codeBtn">
+<i class="fa-solid fa-code"></i>
+<span>Code Assistant</span>
+</button>
+
+<button class="menu" id="settingsBtn">
+<i class="fa-solid fa-gear"></i>
+<span>Settings</span>
+</button>
+
+<div class="bottom">
+
+<div class="creditBox">
+
+<h3>Credits</h3>
+
+<div id="creditCount">1000</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<div class="main">
+
 <header>
 
 <h1>🐞 Cockroach AI v5</h1>
 
-<p>
-Powered by Cockroach AI
-</p>
+<p>Powered by Cockroach AI</p>
 
 </header>
 <!-- ================= CHAT SECTION ================= -->
@@ -15,7 +97,7 @@ Powered by Cockroach AI
 
 <div class="ai-message">
 
-👋 Welcome to Cockroach AI
+👋 Welcome to <b>Cockroach AI v5</b>
 
 <br><br>
 
@@ -62,7 +144,6 @@ Generate Image
 <div id="imageResult"></div>
 
 </section>
-
 <!-- ================= VIDEO SECTION ================= -->
 
 <section
@@ -92,9 +173,12 @@ Generate Video
 <div id="videoResult"></div>
 
 </section>
+
 <!-- ================= MUSIC SECTION ================= -->
 
-<section id="musicSection" style="display:none;">
+<section
+id="musicSection"
+style="display:none;">
 
 <h2>🎵 Music AI</h2>
 
@@ -102,7 +186,8 @@ Generate Video
 id="musicPrompt"
 placeholder="Describe your music..."></textarea>
 
-<button id="generateMusicBtn">
+<button
+id="generateMusicBtn">
 
 Generate Music
 
@@ -114,7 +199,9 @@ Generate Music
 
 <!-- ================= PDF SECTION ================= -->
 
-<section id="pdfSection" style="display:none;">
+<section
+id="pdfSection"
+style="display:none;">
 
 <h2>📄 PDF Chat</h2>
 
@@ -129,7 +216,8 @@ accept=".pdf">
 id="pdfPrompt"
 placeholder="Ask questions from your PDF..."></textarea>
 
-<button id="chatPdfBtn">
+<button
+id="chatPdfBtn">
 
 Chat with PDF
 
@@ -138,10 +226,11 @@ Chat with PDF
 <div id="pdfResult"></div>
 
 </section>
-
 <!-- ================= CODE SECTION ================= -->
 
-<section id="codeSection" style="display:none;">
+<section
+id="codeSection"
+style="display:none;">
 
 <h2>💻 Code Assistant</h2>
 
@@ -149,7 +238,8 @@ Chat with PDF
 id="codePrompt"
 placeholder="Paste your code here..."></textarea>
 
-<button id="analyzeCodeBtn">
+<button
+id="analyzeCodeBtn">
 
 Analyze Code
 
@@ -161,7 +251,9 @@ Analyze Code
 
 <!-- ================= SETTINGS SECTION ================= -->
 
-<section id="settingsSection" style="display:none;">
+<section
+id="settingsSection"
+style="display:none;">
 
 <h2>⚙ Settings</h2>
 
@@ -175,7 +267,7 @@ Analyze Code
 
 <div class="setting-card">
 
-<h3>Backend</h3>
+<h3>Backend Status</h3>
 
 <p id="backendStatus">Checking...</p>
 
@@ -191,9 +283,21 @@ Analyze Code
 
 </section>
 
-</div>
+<footer>
+
+<p>
+
+© 2026 Cockroach AI • Powered by Cockroach AI
+
+</p>
+
+</footer>
 
 </div>
+<!-- END MAIN -->
+
+</div>
+<!-- END APP -->
 
 <script src="script.js"></script>
 
