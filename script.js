@@ -189,7 +189,8 @@ sendBtn.addEventListener("click", async () => {
         });
 
         const data = await response.json();
-
+        console.log(data);
+alert(JSON.stringify(data, null, 2));
         if (data.success) {
 
             loading.innerHTML = data.reply;
@@ -374,8 +375,10 @@ generateVideoBtn.addEventListener("click", async () => {
         if (!data.success) {
 
             videoStatus.innerHTML =
-            "❌ " + (data.message || "Video generation failed.");
-
+    "❌ " +
+    (typeof data.message === "object"
+        ? JSON.stringify(data.message)
+        : (data.message || "Video generation failed."));
             return;
 
         }
