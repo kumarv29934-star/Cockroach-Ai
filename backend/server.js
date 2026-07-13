@@ -13,9 +13,7 @@ app.use(express.json());
 // ================= GEMINI =================
 
 const ai = new GoogleGenAI({
-
     apiKey: process.env.GEMINI_API_KEY
-
 });
 
 // ================= HOME =================
@@ -23,15 +21,10 @@ const ai = new GoogleGenAI({
 app.get("/", (req, res) => {
 
     res.json({
-
         success: true,
-
         name: "Cockroach AI Backend",
-
         version: "6.0.0",
-
         status: "Running"
-
     });
 
 });
@@ -64,15 +57,13 @@ app.post("/chat", async (req, res) => {
         if (!message) {
 
             return res.status(400).json({
-
                 success: false,
                 reply: "Message is required."
-
             });
 
         }
 
-        const result = await ai.models.generateContent({
+        const response = await ai.models.generateContent({
 
             model: "gemini-2.5-flash",
 
@@ -84,7 +75,7 @@ app.post("/chat", async (req, res) => {
 
             success: true,
 
-            reply: result.text
+            reply: response.text
 
         });
 
@@ -97,7 +88,7 @@ app.post("/chat", async (req, res) => {
 
             success: false,
 
-            reply: "Gemini Chat Error"
+            reply: err.message || "Chat failed"
 
         });
 
@@ -115,8 +106,11 @@ app.post("/generate-image", async (req, res) => {
         if (!prompt) {
 
             return res.status(400).json({
+
                 success: false,
+
                 message: "Prompt is required."
+
             });
 
         }
@@ -126,33 +120,55 @@ app.post("/generate-image", async (req, res) => {
             `https://${process.env.QWEN_WORKSPACE_ID}.ap-southeast-1.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`,
 
             {
+
                 model: "qwen-image-2.0-pro",
 
                 input: {
+
                     messages: [
+
                         {
+
                             role: "user",
+
                             content: [
+
                                 {
+
                                     text: prompt
+
                                 }
+
                             ]
+
                         }
+
                     ]
+
                 },
 
                 parameters: {
+
                     size: "1024*1024",
+
                     watermark: false,
+
                     prompt_extend: true
+
                 }
+
             },
 
             {
+
                 headers: {
+
                     Authorization: `Bearer ${process.env.DASHSCOPE_API_KEY}`,
+
                     "Content-Type": "application/json"
+
                 }
+
             }
 
         );
@@ -191,7 +207,7 @@ app.post("/generate-image", async (req, res) => {
 // ================= VIDEO GENERATOR =================
 
 app.post("/generate-video", async (req, res) => {
-    console.log("NEW VIDEO ROUTE WORKING");
+
     try {
 
         const { prompt } = req.body;
@@ -206,43 +222,29 @@ app.post("/generate-video", async (req, res) => {
         }
 
         const response = await axios.post(
-    "https://agents.lumalabs.ai/v1/generations",
-    {
-        model: "ray-3.2",
-        type: "video",
-        prompt: prompt,
-        aspect_ratio: "9:16"
-    },
-    {
-        headers: {
-            Authorization: `Bearer ${process.env.LUMA_API_KEY}`,
-            "Content-Type": "application/json"
-        }
-    }
-);
+
+            "https://agents.lumalabs.ai/v1/generations",
 
             {
+                model: "ray-3.2",
+                type: "video",
+                prompt: prompt,
+                aspect_ratio: "9:16"
+            },
 
+            {
                 headers: {
-
                     Authorization: `Bearer ${process.env.LUMA_API_KEY}`,
-
                     "Content-Type": "application/json"
-
                 }
-
             }
 
         );
 
         res.json({
-
             success: true,
-
             id: response.data.id,
-
             state: response.data.state
-
         });
 
     } catch (err) {
@@ -251,15 +253,8 @@ app.post("/generate-video", async (req, res) => {
         console.error(JSON.stringify(err.response?.data || err.message, null, 2));
 
         res.status(500).json({
-
             success: false,
-
-            message:
-                err.response?.data?.detail ||
-                err.response?.data?.message ||
-                err.message ||
-                "Video generation failed"
-
+            message: err.response?.data || err.message
         });
 
     }
